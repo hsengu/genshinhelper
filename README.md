@@ -89,7 +89,7 @@ Read logs: `journalctl -u genshinhelper -f`
 
 1. Building Docker Image
     ```
-    $ docker build -t . genshin-helper
+    $ docker build -t genshin-helper .
     ```
 
 2. Sample Docker Compose
