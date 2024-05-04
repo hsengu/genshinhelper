@@ -19,6 +19,7 @@ Feel free to join the Discord server if you would like more immediate assistance
 - View real-time resin and expedition info
 - View daily elite cap and recent runs
 - Auto-redeem Genshin codes for everyone
+- Auto-redeem Honkai Star Rail codes for everyone
 - Export game data
 
 ## Bot usage
@@ -83,3 +84,27 @@ WantedBy=multi-user.target
 Start: `sudo systemctl start genshinhelper`
 
 Read logs: `journalctl -u genshinhelper -f`
+
+### Docker
+
+1. Building Docker Image
+    ```
+    $ docker build -t . genshin-helper
+    ```
+
+2. Sample Docker Compose
+
+    ```
+    services:
+        genshin-helper:
+            container_name: genshin-helper
+            image: genshin-helper:latest
+            volumes:
+                - /var/discord/genshinhelper/genshinhelper.db:/usr/src/genshinhelper/genshinhelper.db
+            restart: unless-stopped
+            network_mode: bridge
+    ```
+3. Deploying Docker Container
+    ```
+    $ docker compose up -d
+    ```

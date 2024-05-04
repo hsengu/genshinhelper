@@ -311,9 +311,15 @@ ALL_PREFERENCES = [
         guild_level=2,
     ),
     PreferenceOption(
-        label="Auto code redemption",
+        label="Auto code redemption for Genshin",
         description="New codes are auto-redeemed when found",
         value=Preferences.AUTO_REDEEM,
+        guild_level=3,
+    ),
+        PreferenceOption(
+        label="Auto code redemption for Honkai Star Rail",
+        description="New codes are auto-redeemed when found",
+        value=Preferences.HSR_AUTO_REDEEM,
         guild_level=3,
     ),
 ]

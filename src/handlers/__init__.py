@@ -7,10 +7,12 @@ from handlers import (
     daily_checkin,
     mora_runs,
     redeem_codes,
+    hsr_redeem_codes,
     farm_route,
     bot_manager,
     genshin_events,
     genshin_codes,
+    hsr_codes,
     role_manager,
     emotes,
     spiral_abyss,
@@ -25,6 +27,7 @@ all_handlers = [
     user_manager.UserManager,
     mora_runs.MoraRunHandler,
     redeem_codes.RedeemCodes,
+    hsr_redeem_codes.HSRRedeemCodes,
     farm_route.FarmRouteHandler,
     bot_manager.BotCommandHandler,
     role_manager.RoleManager,
@@ -37,6 +40,7 @@ all_handlers = [
     daily_checkin.HoyolabDailyCheckin,
     genshin_events.GenshinEventScanner,
     genshin_codes.GenshinCodeScanner,
+    hsr_codes.HSRCodeScanner
 ]
 
 # Optional
