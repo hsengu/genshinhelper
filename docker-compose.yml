@@ -3,6 +3,6 @@ services:
     container_name: genshin-helper
     image: genshin-helper:latest
     volumes:
-      - /var/discord/genshinhelper/genshinhelper.db:/usr/src/genshinhelper/genshinhelper.db
+      - /var/discord/genshinhelper/genshinhelper.db:/app/genshinhelper.db
     restart: unless-stopped
     network_mode: bridge
