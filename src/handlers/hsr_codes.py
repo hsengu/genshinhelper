@@ -67,7 +67,7 @@ class HSRCodeScanner(commands.Cog):
         session.commit()
 
         await self.send_notification(new_codes)
-        await self.hsr_redeem(new_codes)
+        await self.redeem(new_codes)
 
     async def send_notification(self, codes: Iterable[str]):
         embed = discord.Embed(
