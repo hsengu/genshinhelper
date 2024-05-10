@@ -8,11 +8,9 @@ RUN mkdir /install
 WORKDIR /install
 
 COPY ./requirements-docker.txt requirements.txt
-COPY ./app.json .
-COPY ./setup* .
 COPY ./.env .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 FROM base
 

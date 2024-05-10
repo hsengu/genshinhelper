@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Iterable
 
 import discord
@@ -39,7 +39,7 @@ class Dispatcher(commands.Cog):
                 .where(
                     ScheduledItem.type.in_(self.supported_handlers),
                     ScheduledItem.scheduled_at
-                    < datetime.utcnow() + relativedelta(seconds=self.task_interval),
+                    < datetime.now(timezone.utc) + relativedelta(seconds=self.task_interval),
                     ~ScheduledItem.done,
                 )
                 .order_by(ScheduledItem.scheduled_at.asc())
@@ -51,7 +51,7 @@ class Dispatcher(commands.Cog):
         # Sleep until the earliest task is ready
         for task in scheduled_tasks:
             scheduled_at = task.scheduled_at
-            wait_time = max((scheduled_at - datetime.utcnow()).total_seconds(), 0)
+            wait_time = max((scheduled_at - datetime.now(timezone.utc)).total_seconds(), 0)
             await asyncio.sleep(wait_time)
 
             try:
