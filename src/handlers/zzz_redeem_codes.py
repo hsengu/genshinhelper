@@ -15,15 +15,15 @@ from datamodels.genshin_user import GenshinUser
 from datamodels.uid_mapping import UidMapping
 
 
-class HSRRedeemCodes(commands.Cog):
+class ZZZRedeemCodes(commands.Cog):
     def __init__(self, bot: discord.Bot = None):
         self.bot = bot
 
     @commands.slash_command(
-        description="Redeems Honkai Star Rail codes",
+        description="Redeems Zenless Zone Zero codes",
         guild_ids=guild_level.get_guild_ids(level=3),
     )
-    async def hsr_redeem(
+    async def zzz_redeem(
         self,
         ctx: ApplicationContext,
         codes: Option(str, "Codes separated by commas"),
@@ -60,16 +60,16 @@ class HSRRedeemCodes(commands.Cog):
                 .all()
             )
 
-        hsr_codes = set(codes.split(","))
+        zzz_codes = set(codes.split(","))
 
-        if len(hsr_codes) > 5:
+        if len(zzz_codes) > 5:
             await ctx.respond(f"Too many codes")
             return
 
         await ctx.defer()
         embeds = []
 
-        for code in hsr_codes:
+        for code in zzz_codes:
             code = code.strip().upper()
             embed = discord.Embed(
                 description=f"{Emoji.LOADING} Redeeming code {code}... "
@@ -89,9 +89,9 @@ class HSRRedeemCodes(commands.Cog):
 
                     try:
                         if target_uid:
-                            await gs.redeem_code(code, uid=target_uid, game=genshin.Game.STARRAIL)
+                            await gs.redeem_code(code, uid=target_uid, game=genshin.Game.ZZZ)
                         else:
-                            await gs.redeem_code(code, game=genshin.Game.STARRAIL)
+                            await gs.redeem_code(code, game=genshin.Game.ZZZ)
                         redeemed += 1
                     except genshin.errors.InvalidCookies:
                         account.mihoyo_token = None

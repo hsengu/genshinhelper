@@ -2,7 +2,7 @@ Pillow==10.3.0
 SQLAlchemy==2.0.30
 aiohttp==3.9.5
 dateparser==1.2.0
-genshin@git+https://github.com/thesadru/genshin.py.git@a1ec09c4147cbb881ec1edf426515c416c1d453b#egg=genshin
+genshin@git+https://github.com/thesadru/genshin.py.git@d36dbb10555a4e29c8150a0bc3d8f42102570f19#egg=genshin
 lxml==5.2.1
 py-cord@git+https://github.com/Pycord-Development/pycord.git@08370b57368e2e5ce0e4e70faf8514742f45f5e5#egg=py-cord
 python-dateutil==2.9.0.post0
