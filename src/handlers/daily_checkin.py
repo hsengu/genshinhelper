@@ -37,7 +37,7 @@ class HoyolabDailyCheckin(commands.Cog):
             # To better align with check in time, we schedule the task such that it runs every
             # {TASK_INTERVAL_HOURS} hours and one run will coincide with the checkin reset time.
             next_checkin_time = self.CHECKIN_TIMEZONE.day_beginning + relativedelta(
-                day=1
+                hours=25
             )
             time_until = (
                 next_checkin_time - self.CHECKIN_TIMEZONE.current_time
