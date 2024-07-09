@@ -1,6 +1,6 @@
-FROM python:3.12.3-alpine as base
+FROM python:3.12.3-alpine AS base
 
-FROM base as build
+FROM base AS build
 
 RUN apk add --no-cache git build-base libxml2-dev libxslt-dev zlib-dev jpeg-dev freetype-dev
 RUN pip install --upgrade pip
