@@ -2,14 +2,20 @@ Pillow==10.3.0
 SQLAlchemy==2.0.30
 aiohttp==3.9.5
 dateparser==1.2.0
-genshin@git+https://github.com/thesadru/genshin.py.git@dev#egg=genshin
+enkacard==3.3.8
 lxml==5.2.1
-py-cord@git+https://github.com/Pycord-Development/pycord.git@08370b57368e2e5ce0e4e70faf8514742f45f5e5#egg=py-cord
+py-cord==2.5.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.1
 rapidfuzz==3.9.0
-tenacity==8.3.0
-# PixivPy==3.7.0
-# discord==2.3.2
-# setuptools==69.5.1
+tenacity==8.2.3
+setuptools==69.5.1
+
+# GenshinPy lib
+genshin@git+https://github.com/thesadru/genshin.py.git@dev#egg=genshin
+pydantic==2.7.1
+qrcode[pil]
+
+# Enka.network profiles
+enkacard==3.3.8
