@@ -11,13 +11,13 @@ from handlers import (
     zzz_redeem_codes,
     farm_route,
     bot_manager,
+    game_profile,
     genshin_events,
     genshin_codes,
     hsr_codes,
     zzz_codes,
     role_manager,
     emotes,
-    spiral_abyss,
     remind,
 )
 
@@ -35,8 +35,8 @@ all_handlers = [
     bot_manager.BotCommandHandler,
     role_manager.RoleManager,
     emotes.EmoteHandler,
-    spiral_abyss.SpiralAbyssHandler,
     remind.RemindHandler,
+    game_profile.GameProfileHandler,
 
     # Tasks
     notes_monitor.RealTimeNotesMonitor,
@@ -46,14 +46,6 @@ all_handlers = [
     hsr_codes.HSRCodeScanner,
     zzz_codes.ZZZCodeScanner,
 ]
-
-# Optional
-try:
-    import pixivpy3
-    from optional.pixiv import daily_best_feed
-    all_handlers.append(daily_best_feed.DailyBestIllustFeed)
-except ModuleNotFoundError:
-    pass
 
 # Adding a command (implemented with application command) to this list will also enable a prefix version of it
 prefix_commands = [(game_info.GameInfoHandler, ["resin"])]
