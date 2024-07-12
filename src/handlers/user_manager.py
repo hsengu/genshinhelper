@@ -49,12 +49,12 @@ class UserManager(commands.Cog):
             self,
             ctx: ApplicationContext,
             ltuid: Option(int, "Mihoyo account ID", required=False),
-            ltuid_v2: Option(int, "Mihoyo account ID v2", required=False),
+            ltuid_v2: Option(int, "Mihoyo account ID v2", required=True),
             ltoken: Option(str, "Hoyolab login token", required=False),
-            ltoken_v2: Option(str, "Hoyolab login token v2", required=False),
+            ltoken_v2: Option(str, "Hoyolab login token v2", required=True),
             authkey: Option(str, "Wish history auth key", required=False),
             cookie_token: Option(str, "genshin.hoyoverse.com cookie_token", required=False),
-            cookie_token_v2: Option(str, "genshin.hoyoverse.com cookie_token v2", required=False),
+            cookie_token_v2: Option(str, "genshin.hoyoverse.com cookie_token v2", required=True),
     ):
         ltuid = ltuid or ltuid_v2  # They are the same ID
         ltoken = ltoken or ltoken_v2  # We store them in the same record but they have different format
