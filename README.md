@@ -20,6 +20,7 @@ Feel free to join the Discord server if you would like more immediate assistance
 - View daily elite cap and recent runs
 - Auto-redeem Genshin codes for everyone
 - Auto-redeem Honkai Star Rail codes for everyone
+- Auto-redeem Zenless Zone Zero codes for everyone
 - Export game data
 
 ## Bot usage
