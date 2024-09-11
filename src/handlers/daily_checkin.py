@@ -178,12 +178,8 @@ class HoyolabDailyCheckin(commands.Cog):
         for game_string in DAILY_CHECKIN_GAMES:
             game = Game[game_string]
             try:
-<<<<<<< HEAD
-                rewards.append(await client.claim_daily_reward(reward=True, game=game))
-=======
                 await client.claim_daily_reward(reward=True, game=game)
                 checked_in_games.append(game)
->>>>>>> 7ef282e935427cd3c26e79d8931ccb644437f9f5
             except genshin.errors.DailyGeetestTriggered:
                 logger.info("Skipping geetest")
                 continue

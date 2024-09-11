@@ -19,11 +19,7 @@ from datamodels.genshin_user import GenshinUser
 from datamodels.guild_settings import GuildSettings, GuildSettingKey
 
 
-<<<<<<< HEAD
-CODE_REGEX = r"^[A-Z0-9]{8,20}$"
-=======
-CODE_REGEX = r"^[A-Za-z0-9]{10,20}$"
->>>>>>> 7ef282e935427cd3c26e79d8931ccb644437f9f5
+CODE_REGEX = r"^[A-Za-z0-9]{8,20}$"
 
 
 class GenshinCodeScanner(commands.Cog):

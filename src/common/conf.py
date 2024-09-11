@@ -27,9 +27,5 @@ PIXIV_BLOCKED_TAGS = list(
     filter(None, os.getenv("PIXIV_BLOCKED_TAGS", "").split(","))
 )
 DAILY_CHECKIN_GAMES = list(
-<<<<<<< HEAD
-    filter(None, os.getenv("DAILY_CHECKIN_GAMES", "genshin,hkrpg,nap").split(","))
-=======
     filter(None, os.getenv("DAILY_CHECKIN_GAMES", "").split(","))
->>>>>>> 7ef282e935427cd3c26e79d8931ccb644437f9f5
 )
