@@ -1,4 +1,4 @@
-FROM python:3.12.3-alpine AS base
+FROM python:3.12.6-alpine AS base
 
 FROM base AS build
 
