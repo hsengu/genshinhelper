@@ -128,4 +128,4 @@ class ZZZRedeemCodes(commands.Cog):
                     raise e
 
             await ctx.edit(embeds=embeds)
-            await asyncio.sleep(3)
+            await asyncio.sleep(7)
