@@ -126,7 +126,7 @@ class RedeemCodes(commands.Cog):
                 if e.retcode == -2003:
                     embed.description = f"Code {code} is invalid."
                 else:
-                    logger.exception("Code can't be claimed")
+                    logger.exception(f"Code can't be claimed: {e.retcode}")
                     raise e
 
             await ctx.edit(embeds=embeds)
