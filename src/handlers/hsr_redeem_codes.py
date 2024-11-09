@@ -62,9 +62,9 @@ class HSRRedeemCodes(commands.Cog):
 
         hsr_codes = set(codes.split(","))
 
-        # if len(hsr_codes) > 5:
-        #     await ctx.respond(f"Too many codes")
-        #     return
+        if len(hsr_codes) > 10:
+            await ctx.respond(f"Too many codes")
+            return
 
         await ctx.defer()
         embeds = []
