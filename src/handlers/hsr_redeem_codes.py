@@ -119,8 +119,10 @@ class HSRRedeemCodes(commands.Cog):
                         f"\n{already_claimed} accounts already claimed this code."
                     )
             except genshin.errors.GenshinException as e:
-                if e.retcode == -2003:
-                    embed.description = f"Code {code} is invalid. wdf"
+                if e.retcode == -2001:
+                    embed.description = f"Code {code} has expired."
+                elif e.retcode == -2003:
+                    embed.description = f"Code {code} is invalid."
                 else:
                     logger.exception("Code can't be claimed")
                     raise e
