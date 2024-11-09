@@ -62,9 +62,9 @@ class ZZZRedeemCodes(commands.Cog):
 
         zzz_codes = set(codes.split(","))
 
-        if len(zzz_codes) > 5:
-            await ctx.respond(f"Too many codes")
-            return
+        # if len(zzz_codes) > 5:
+        #     await ctx.respond(f"Too many codes")
+        #     return
 
         await ctx.defer()
         embeds = []

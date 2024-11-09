@@ -62,9 +62,9 @@ class RedeemCodes(commands.Cog):
 
         genshin_codes = set(codes.split(","))
 
-        if len(genshin_codes) > 5:
-            await ctx.respond(f"Too many codes")
-            return
+        # if len(genshin_codes) > 5:
+        #     await ctx.respond(f"Too many codes")
+        #     return
 
         await ctx.defer()
         embeds = []
