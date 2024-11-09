@@ -53,7 +53,7 @@ class Dispatcher(commands.Cog):
         # Sleep until the earliest task is ready
         for task in scheduled_tasks:
             scheduled_at = task.scheduled_at
-            wait_time = max((scheduled_at.replace - datetime.now(timezone.utc)).total_seconds(), 0)
+            wait_time = max((scheduled_at.replace() - datetime.now(timezone.utc)).total_seconds(), 0)
             await asyncio.sleep(wait_time)
 
             try:
