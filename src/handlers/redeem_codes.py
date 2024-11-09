@@ -108,6 +108,8 @@ class RedeemCodes(commands.Cog):
                             )
                         )
                     except genshin.errors.GenshinException as e:
+                        if e.retcode == -2001:
+                            embed.description = f"Code {code} is expired."
                         if e.retcode == -2017:
                             already_claimed += 1
                         else:
