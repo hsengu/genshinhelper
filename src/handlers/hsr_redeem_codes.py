@@ -110,6 +110,8 @@ class HSRRedeemCodes(commands.Cog):
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017:
                             already_claimed += 1
+                        elif e.retcode == -2018:
+                            already_claimed += 1
                         else:
                             raise e
 

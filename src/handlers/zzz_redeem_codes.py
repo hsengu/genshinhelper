@@ -110,6 +110,8 @@ class ZZZRedeemCodes(commands.Cog):
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017:
                             already_claimed += 1
+                        elif e.retcode == -2018:
+                            already_claimed += 1
                         else:
                             raise e
 
@@ -122,7 +124,7 @@ class ZZZRedeemCodes(commands.Cog):
                 if e.retcode == -2001:
                     embed.description = f"Code {code} has expired."
                 if e.retcode == -2003:
-                    embed.description = f"Code {code} is invalid. wdf"
+                    embed.description = f"Code {code} is invalid."
                 else:
                     logger.exception("Code can't be claimed")
                     raise e
