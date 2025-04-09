@@ -18,6 +18,8 @@ COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3
 COPY --from=build /install /app
 COPY ./src /app/src
 
+ENV TZ=America/Los_Angeles
+
 WORKDIR /app
 
 RUN pip uninstall -y pip && apk --purge del apk-tools
