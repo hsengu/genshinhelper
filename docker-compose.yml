@@ -4,5 +4,7 @@ services:
     image: genshin-helper:latest
     volumes:
       - /var/discord/genshinhelper/genshinhelper.db:/app/genshinhelper.db
+    environment:
+      - TZ=America/Los_Angeles
     restart: unless-stopped
     network_mode: bridge
