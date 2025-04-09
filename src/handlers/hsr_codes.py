@@ -35,6 +35,7 @@ class HSRCodeScanner(commands.Cog):
 
     @tasks.loop(minutes=5)
     async def poll(self):
+        logger.info(f"Checking for HSR Codes")
         async with aiohttp.ClientSession() as http:
             codes = set()
             codes.update([c async for c in self.get_codes_from_pockettactics()])
@@ -68,6 +69,7 @@ class HSRCodeScanner(commands.Cog):
 
         await self.send_notification(new_codes)
         await self.redeem(new_codes)
+        logger.info(f"HSR code check completed")
 
     async def send_notification(self, codes: Iterable[str]):
         embed = discord.Embed(
