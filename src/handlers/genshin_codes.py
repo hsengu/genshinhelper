@@ -53,6 +53,7 @@ class GenshinCodeScanner(commands.Cog):
         )
 
         if codes.issubset(existing_codes):
+            logger.info(f"No new codes found for Genshin, code check completed")
             return
 
         logger.info(f"New code is available: {codes}")

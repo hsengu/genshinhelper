@@ -53,6 +53,7 @@ class ZZZCodeScanner(commands.Cog):
         )
 
         if codes.issubset(existing_codes):
+            logger.info(f"No new codes found for ZZZ, code check completed")
             return
 
         logger.info(f"New code is available: {codes}")
