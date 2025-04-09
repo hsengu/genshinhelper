@@ -56,9 +56,8 @@ class ZZZCodeScanner(commands.Cog):
             logger.info(f"No new codes found for ZZZ, code check completed")
             return
 
-        logger.info(f"New code is available: {codes}")
-
         new_codes = codes - existing_codes
+        logger.info(f"New code is available: {new_codes}")
 
         for code in new_codes:
             session.merge(RedeemableCode(code=code, working=True))
