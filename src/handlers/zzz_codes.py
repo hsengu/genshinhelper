@@ -35,7 +35,7 @@ class ZZZCodeScanner(commands.Cog):
 
     @tasks.loop(minutes=5)
     async def poll(self):
-        logger.info(f"Checking for Genshin Codes")
+        logger.info(f"Checking for ZZZ Codes")
         async with aiohttp.ClientSession() as http:
             codes = set()
             codes.update([c async for c in self.get_codes_from_pockettactics()])
