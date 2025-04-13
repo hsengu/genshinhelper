@@ -26,6 +26,7 @@ class RedeemCodes(commands.Cog):
     async def redeem(
         self,
         ctx: ApplicationContext,
+        game: Option(str, "Game to redeem for (pick 1, default is genshin): genshin,hsr,zzz", name="game", default="genshin"),
         codes: Option(str, "Codes separated by commas"),
         target: Option(str, "UID or 'all' for everyone", name="for", default=False),
     ):
@@ -60,16 +61,21 @@ class RedeemCodes(commands.Cog):
                 .all()
             )
 
-        genshin_codes = set(codes.split(","))
+        match game:
+            case "hsr": redeem_for = "hkrpg"
+            case "zzz": redeem_for = "nap"
+            case _: redeem_for = "genshin"
+            
+        game_codes = set(codes.split(","))
 
-        if len(genshin_codes) > 10:
+        if len(game_codes) > 10:
             await ctx.respond(f"Too many codes")
             return
 
         await ctx.defer()
         embeds = []
 
-        for code in genshin_codes:
+        for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
                 description=f"{Emoji.LOADING} Redeeming code {code}... "
@@ -89,9 +95,9 @@ class RedeemCodes(commands.Cog):
 
                     try:
                         if target_uid:
-                            await gs.redeem_code(code, uid=target_uid)
+                            await gs.redeem_code(code, game=redeem_for, uid=target_uid)
                         else:
-                            await gs.redeem_code(code)
+                            await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
                     except genshin.errors.InvalidCookies:
                         account.mihoyo_token = None
