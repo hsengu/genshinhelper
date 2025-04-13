@@ -47,7 +47,7 @@ class CodeScanner(commands.Cog):
         )
 
         for game in games :
-            if game.issubset(existing_codes):
+            if games[game].issubset(existing_codes):
                 logger.info(f"{game} :     No new codes found")
             else:
                 logger.info(f"{game} :     New code is available: {games[game]}")
