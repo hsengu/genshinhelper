@@ -101,9 +101,9 @@ class CodeScanner(commands.Cog):
         )
 
         match game_name:
-            case 'GENSHIN': redeem_game = 'genshin'
-            case 'STARRAIL': redeem_game = 'hkrpg'
-            case 'ZZZ': redeem_game = 'nap'
+            case 'GENSHIN': redeem_game = genshin.Game.GENSHIN
+            case 'STARRAIL': redeem_game = genshin.Game.STARRAIL
+            case 'ZZZ': redeem_game = genshin.Game.ZZZ
 
         for code in codes:
             queue = []

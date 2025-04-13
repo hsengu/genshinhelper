@@ -81,7 +81,7 @@ class RedeemCodes(commands.Cog):
         for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
-                description=f"{Emoji.LOADING} Redeeming {redeem_for} code {code}... "
+                description=f"{Emoji.LOADING} Redeeming {game} code {code}... "
             )
             embeds.append(embed)
             await ctx.edit(embeds=embeds)
@@ -91,7 +91,7 @@ class RedeemCodes(commands.Cog):
             try:
                 for i, account in enumerate(accounts):
                     embed.description = (
-                        f"{Emoji.LOADING} Redeeming {redeem_for} code {code}... {i}/{len(accounts)}"
+                        f"{Emoji.LOADING} Redeeming {game} code {code}... {i}/{len(accounts)}"
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
@@ -124,7 +124,7 @@ class RedeemCodes(commands.Cog):
                         else:
                             raise e
 
-                embed.description = f"Redeemed {redeem_for} code {code} for {redeemed} accounts."
+                embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
                     embed.description += (
                         f"\n{already_claimed} accounts already claimed this code."
