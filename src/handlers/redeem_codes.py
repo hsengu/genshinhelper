@@ -61,7 +61,7 @@ class RedeemCodes(commands.Cog):
                 .all()
             )
 
-        game = game.upper
+        game = game.upper()
         match game:
             case "HSR": redeem_for = genshin.Game.STARRAIL
             case "ZZZ": redeem_for = genshin.Game.ZZZ
