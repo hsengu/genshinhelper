@@ -18,8 +18,8 @@ class Preferences:
     TEAPOT_REMINDER = "teapot_reminder"
     PARAMETRIC_TRANSFORMER = "parametric"
     AUTO_REDEEM = "auto_redeem"
-    HSR_AUTO_REDEEM = "hsr_auto_redeem"
-    ZZZ_AUTO_REDEEM = "zzz_auto_redeem"
+    # HSR_AUTO_REDEEM = "hsr_auto_redeem"
+    # ZZZ_AUTO_REDEEM = "zzz_auto_redeem"
 
 
 DEFAULT_SETTINGS = {
@@ -29,6 +29,6 @@ DEFAULT_SETTINGS = {
     Preferences.TEAPOT_REMINDER: True,
     Preferences.PARAMETRIC_TRANSFORMER: True,
     Preferences.AUTO_REDEEM: True,
-    Preferences.HSR_AUTO_REDEEM: True,
-    Preferences.ZZZ_AUTO_REDEEM: True,
+    # Preferences.HSR_AUTO_REDEEM: True,
+    # Preferences.ZZZ_AUTO_REDEEM: True,
 }
