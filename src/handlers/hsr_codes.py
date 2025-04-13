@@ -56,9 +56,8 @@ class HSRCodeScanner(commands.Cog):
             logger.info(f"No new codes found for HSR, code check completed")
             return
 
-        logger.info(f"New code is available: {codes}")
-
         new_codes = codes - existing_codes
+        logger.info(f"New code is available for HSR: {new_codes}")
 
         for code in new_codes:
             session.merge(RedeemableCode(code=code, working=True))
