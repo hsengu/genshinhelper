@@ -129,6 +129,10 @@ class RedeemCodes(commands.Cog):
                         else:
                             logger.exception(f"\t{ctx.author.id} code can't be claimed: {e.retcode}")
                             # raise e
+                    except genshin.errors.RedemptionInvalid as e:
+                        if e.retcode == -2004:
+                            embed.description = f"Code {code} is invalid."
+                            logger.exceptio(f"\t{ctx.author.id} code {code} is invalid")
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
