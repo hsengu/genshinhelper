@@ -137,7 +137,7 @@ class RedeemCodes(commands.Cog):
                     embed.description = f"Code {code} is invalid."
                 else:
                     logger.exception(f"Code can't be claimed: {e.retcode}")
-                    raise e
+                    # raise e
 
             await ctx.edit(embeds=embeds)
             await asyncio.sleep(7)
