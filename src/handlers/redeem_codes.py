@@ -123,6 +123,7 @@ class RedeemCodes(commands.Cog):
                         )
                         logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
                     except genshin.errors.GenshinException as e:
+                        pass
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
                             logger.exception(f"\t\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
@@ -138,6 +139,7 @@ class RedeemCodes(commands.Cog):
                         f"\n{already_claimed} accounts already claimed this code."
                     )
             except genshin.errors.GenshinException as e:
+                pass
                 if e.retcode == -2001:
                     embed.description = f"Code {code} has expired."
                     logger.exception(f"\t{ctx.author.id} code {code} has already expired")
