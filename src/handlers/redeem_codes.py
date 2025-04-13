@@ -62,9 +62,9 @@ class RedeemCodes(commands.Cog):
             )
 
         match game:
-            case "hsr": redeem_for = "hkrpg"
-            case "zzz": redeem_for = "nap"
-            case _: redeem_for = "genshin"
+            case "hsr": redeem_for = genshin.game.STARRAIL
+            case "zzz": redeem_for = genshin.game.ZZZ
+            case _: redeem_for = genshin.game.GENSHIN
 
         game_codes = set(codes.split(","))
 
@@ -98,9 +98,9 @@ class RedeemCodes(commands.Cog):
 
                     try:
                         if target_uid:
-                            await gs.redeem_code(code, game=repr(redeem_for), uid=target_uid)
+                            await gs.redeem_code(code, game=redeem_for, uid=target_uid)
                         else:
-                            await gs.redeem_code(code, game=repr(redeem_for))
+                            await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
                     except genshin.errors.InvalidCookies:
                         account.mihoyo_token = None
