@@ -26,8 +26,8 @@ class RedeemCodes(commands.Cog):
     async def redeem(
         self,
         ctx: ApplicationContext,
-        codes: Option(str, "Codes separated by commas"),
-        game: Option(str, "Game to redeem for (pick 1, default is genshin): genshin,hsr,zzz", name="game", default="genshin"),
+        game: Option(str, "Game to redeem for (pick 1, default is genshin): genshin,hsr,zzz", name="game", default="genshin", required=False),
+        codes: Option(str, "Codes separated by commas", required=False),
         target: Option(str, "UID or 'all' for everyone", name="for", default=False),
     ):
         target: str = target or "all"
