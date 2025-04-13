@@ -122,6 +122,7 @@ class RedeemCodes(commands.Cog):
                         )
                         logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
                     except genshin.errors.RedemptionInvalid as e:
+                        pass
                         if e.retcode == -2004:
                             logger.exception(f"\t\t{code} is not valid")
                     except genshin.errors.GenshinException as e:
