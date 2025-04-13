@@ -48,9 +48,9 @@ class CodeScanner(commands.Cog):
 
         for game in games :
             if games[game].issubset(existing_codes):
-                logger.info(f"{game} >>> No new codes found")
+                logger.info(f"\t{game} >>> No new codes found")
             else:
-                logger.info(f"{game} >>> New code is available: {games[game]}")
+                logger.info(f"\t{game} >>> New code is available: {games[game]}")
 
                 new_codes = games[game] - existing_codes
 
@@ -110,14 +110,14 @@ class CodeScanner(commands.Cog):
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
-                logger.info(f"Redeeming code {code} for account {account.mihoyo_id}")
+                logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
 
             results = await asyncio.gather(*queue, return_exceptions=True)
 
             if results and isinstance(results[0], genshin.errors.RedemptionInvalid):
                 session.merge(RedeemableCode(code=code, working=False))
-                logger.info(f"Code {code} expired. Updating database")
+                logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(results)
             await asyncio.sleep(5)
