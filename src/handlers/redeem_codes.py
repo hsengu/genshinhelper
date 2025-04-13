@@ -121,18 +121,16 @@ class RedeemCodes(commands.Cog):
                                             f"Please register again if you want to continue using the bot."
                             )
                         )
-                        logger.info(f"\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
+                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
                     except genshin.errors.GenshinException as e:
-                        if e.retcode == -2017 or e.retcode == -2018 or e.retcode == -2004:
+                        if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
-                            logger.exception(f"\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
+                            logger.exception(f"\t\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
+                        elif e.RedemptionInvalid.retcode == -2004:
+                            logger.exception(f"\t\t{ctx.author.id} code {code} is invalid")
                         else:
-                            logger.exception(f"\t{ctx.author.id} code can't be claimed: {e.retcode}")
+                            logger.exception(f"\t\t{ctx.author.id} code can't be claimed: {e.retcode}")
                             # raise e
-                    except genshin.errors.RedemptionInvalid as e:
-                        if e.retcode == -2004:
-                            embed.description = f"Code {code} is invalid."
-                            logger.exceptio(f"\t{ctx.author.id} code {code} is invalid")
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
