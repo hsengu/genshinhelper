@@ -61,8 +61,6 @@ class RedeemCodes(commands.Cog):
                 .all()
             )
 
-        redeem_for = ""
-        
         match game:
             case "hsr": redeem_for = "hkrpg"
             case "zzz": redeem_for = "nap"
@@ -93,7 +91,7 @@ class RedeemCodes(commands.Cog):
             try:
                 for i, account in enumerate(accounts):
                     embed.description = (
-                        f"{Emoji.LOADING} Redeeming code {code}... {i}/{len(accounts)}"
+                        f"{Emoji.LOADING} Redeeming {redeem_for} code {code}... {i}/{len(accounts)}"
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
@@ -126,7 +124,7 @@ class RedeemCodes(commands.Cog):
                         else:
                             raise e
 
-                embed.description = f"Redeemed code {code} for {redeemed} accounts."
+                embed.description = f"Redeemed {redeem_for} code {code} for {redeemed} accounts."
                 if already_claimed:
                     embed.description += (
                         f"\n{already_claimed} accounts already claimed this code."
