@@ -65,9 +65,12 @@ class RedeemCodes(commands.Cog):
             case "hsr": redeem_for = "hkrpg"
             case "zzz": redeem_for = "nap"
             case _: redeem_for = "genshin"
-            
+
         game_codes = set(codes.split(","))
 
+        if len(game_codes) < 1:
+            await ctx.respond(f"No codes entered, doing nothing")
+            return
         if len(game_codes) > 10:
             await ctx.respond(f"Too many codes")
             return
