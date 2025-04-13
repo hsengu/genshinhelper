@@ -98,7 +98,7 @@ class RedeemCodes(commands.Cog):
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
-                    logger.info(f"\tAttempting to redeem {code} for {game} for {account.mihoyo_id}")
+                    logger.info(f"\tRedeeming {code} for {game} for {account.mihoyo_id}")
 
                     try:
                         if target_uid:
