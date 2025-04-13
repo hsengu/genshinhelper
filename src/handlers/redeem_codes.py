@@ -98,9 +98,9 @@ class RedeemCodes(commands.Cog):
 
                     try:
                         if target_uid:
-                            await gs.redeem_code(code, game={redeem_for}, uid=target_uid)
+                            await gs.redeem_code(code, game=repr(redeem_for), uid=target_uid)
                         else:
-                            await gs.redeem_code(code, game={redeem_for})
+                            await gs.redeem_code(code, game=repr(redeem_for))
                         redeemed += 1
                     except genshin.errors.InvalidCookies:
                         account.mihoyo_token = None
