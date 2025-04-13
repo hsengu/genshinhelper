@@ -121,16 +121,15 @@ class RedeemCodes(commands.Cog):
                             )
                         )
                         logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
-                    except genshin.errors.RedemptionInvalid as e:
-                        pass
-                        if e.retcode == -2004:
-                            logger.exception(f"\t\t{code} is not valid")
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
                             logger.exception(f"\t\t{code} is already claimed for {account.mihoyo_id}")
+                        elif e.retcode == -2004:
+                            logger.exception(f"\t\t{code} is not valid")
                         else:
                             logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
+                        return
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
@@ -146,6 +145,7 @@ class RedeemCodes(commands.Cog):
                     logger.exception(f"\t\t{code} is not valid")
                 else:
                     logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
+                return
 
             await ctx.edit(embeds=embeds)
             await asyncio.sleep(7)

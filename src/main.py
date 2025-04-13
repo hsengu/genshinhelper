@@ -14,6 +14,10 @@ from handlers import all_handlers, prefix_commands
 from scheduling import dispatcher
 from utils.unified_context import UnifiedContext
 
+import sys
+
+sys.tracebacklimit = 1
+
 DEFAULT_PREFIX = "!"
 guild_prefix_lookup = defaultdict(lambda: DEFAULT_PREFIX)
 
