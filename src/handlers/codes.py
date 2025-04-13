@@ -48,9 +48,9 @@ class CodeScanner(commands.Cog):
 
         for game in games :
             if games[game].issubset(existing_codes):
-                logger.info(f"{game} :     No new codes found")
+                logger.info(f"{game} >>> No new codes found")
             else:
-                logger.info(f"{game} :     New code is available: {games[game]}")
+                logger.info(f"{game} >>> New code is available: {games[game]}")
 
                 new_codes = games[game] - existing_codes
 
@@ -64,7 +64,7 @@ class CodeScanner(commands.Cog):
 
                 await self.send_notification(new_codes)
                 await self.redeem(new_codes, game)
-            logger.info(f"{game} :     Code check completed")
+            logger.info(f"{game} >>> Code check completed")
 
     async def send_notification(self, codes: Iterable[str]):
         embed = discord.Embed(
