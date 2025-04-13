@@ -61,6 +61,8 @@ class RedeemCodes(commands.Cog):
                 .all()
             )
 
+        redeem_for = ""
+        
         match game:
             case "hsr": redeem_for = "hkrpg"
             case "zzz": redeem_for = "nap"
