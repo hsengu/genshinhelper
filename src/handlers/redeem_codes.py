@@ -14,9 +14,6 @@ from common.logging import logger
 from datamodels.genshin_user import GenshinUser
 from datamodels.uid_mapping import UidMapping
 
-import sys
-sys.tracebacklimit = 0
-
 class RedeemCodes(commands.Cog):
     def __init__(self, bot: discord.Bot = None):
         self.bot = bot
@@ -78,7 +75,7 @@ class RedeemCodes(commands.Cog):
             return
         if len(game_codes) > 10:
             await ctx.respond(f"Too many codes")
-            logger.info(f"\t{ctx.author.id} entered >10 codes")
+            logger.info(f"\tUser input >10 codes")
             return
 
         await ctx.defer()
@@ -101,7 +98,7 @@ class RedeemCodes(commands.Cog):
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
-                    logger.info(f"\t{ctx.author.id} attempting to redeem {code} for {game} for {account.mihoyo_id}")
+                    logger.info(f"\tAttempting to redeem {code} for {game} for {account.mihoyo_id}")
 
                     try:
                         if target_uid:
@@ -127,11 +124,11 @@ class RedeemCodes(commands.Cog):
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
-                            logger.exception(f"\t\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
+                            logger.exception(f"\t\t{code} is already claimed for {account.mihoyo_id}")
                         elif e.retcode == -2004:
-                            logger.exception(f"\t\t{ctx.author.id} code {code} is invalid")
+                            logger.exception(f"\t\t{code} is not valid")
                         else:
-                            logger.exception(f"\t\t{ctx.author.id} code can't be claimed: {e.retcode}")
+                            logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
                             # raise e
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
@@ -142,15 +139,13 @@ class RedeemCodes(commands.Cog):
             except genshin.errors.GenshinException as e:
                 if e.retcode == -2001:
                     embed.description = f"Code {code} has expired."
-                    logger.exception(f"\t{ctx.author.id} code {code} has already expired")
+                    logger.exception(f"\t\t{code} has already expired")
                 elif e.retcode == -2003 or e.retcode == -2004:
-                    embed.description = f"Code {code} is invalid."
-                    logger.exception(f"\t{ctx.author.id} code {code} is invalid")
+                    embed.description = f"{code} is not valid."
+                    logger.exception(f"\t\t{code} is not valid")
                 else:
-                    logger.exception(f"\t{ctx.author.id} Code can't be claimed: {e.retcode}")
+                    logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
                     # raise e
 
             await ctx.edit(embeds=embeds)
             await asyncio.sleep(7)
-
-sys.tracebacklimit = 1000
