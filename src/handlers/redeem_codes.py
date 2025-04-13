@@ -129,7 +129,7 @@ class RedeemCodes(commands.Cog):
                             logger.exception(f"\t\t{code} is not valid")
                         else:
                             logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
-                        return
+                        break
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
@@ -145,7 +145,8 @@ class RedeemCodes(commands.Cog):
                     logger.exception(f"\t\t{code} is not valid")
                 else:
                     logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
-                return
+                break
 
             await ctx.edit(embeds=embeds)
             await asyncio.sleep(7)
+        logger.info(f"{ctx.author.id} end of /redeem attempt")
