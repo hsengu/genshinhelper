@@ -308,18 +308,6 @@ ALL_PREFERENCES = [
         value=Preferences.AUTO_REDEEM,
         guild_level=3,
     ),
-    #     PreferenceOption(
-    #     label="Auto code redemption for Honkai Star Rail",
-    #     description="New codes are auto-redeemed when found",
-    #     value=Preferences.HSR_AUTO_REDEEM,
-    #     guild_level=3,
-    # ),
-    #     PreferenceOption(
-    #     label="Auto code redemption for Zenless Zone Zero",
-    #     description="New codes are auto-redeemed when found",
-    #     value=Preferences.ZZZ_AUTO_REDEEM,
-    #     guild_level=3,
-    # ),
 ]
 
 
