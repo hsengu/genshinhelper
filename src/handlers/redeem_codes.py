@@ -81,7 +81,7 @@ class RedeemCodes(commands.Cog):
         for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
-                description=f"{Emoji.LOADING} Redeeming code {code}... "
+                description=f"{Emoji.LOADING} Redeeming {redeem_for} code {code}... "
             )
             embeds.append(embed)
             await ctx.edit(embeds=embeds)
