@@ -13,9 +13,10 @@ from handlers import (
     bot_manager,
     game_profile,
     genshin_events,
-    genshin_codes,
-    hsr_codes,
-    zzz_codes,
+    codes,
+    # genshin_codes,
+    # hsr_codes,
+    # zzz_codes,
     role_manager,
     emotes,
     remind,
@@ -42,9 +43,10 @@ all_handlers = [
     notes_monitor.RealTimeNotesMonitor,
     daily_checkin.HoyolabDailyCheckin,
     genshin_events.GenshinEventScanner,
-    genshin_codes.GenshinCodeScanner,
-    hsr_codes.HSRCodeScanner,
-    zzz_codes.ZZZCodeScanner,
+    codes.CodeScanner,
+    # genshin_codes.GenshinCodeScanner,
+    # hsr_codes.HSRCodeScanner,
+    # zzz_codes.ZZZCodeScanner,
 ]
 
 # Adding a command (implemented with application command) to this list will also enable a prefix version of it
