@@ -35,7 +35,7 @@ class CodeScanner(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def poll(self):
-        logger.info(f"Checking for codes")
+        logger.info(f"Checking for new game codes")
         async with aiohttp.ClientSession() as http:
             games = {'GENSHIN': set(), 'STARRAIL': set(), 'ZZZ': set()}
             games['GENSHIN'].update([c async for c in self.get_codes_from_pockettactics('genshin')])
@@ -64,7 +64,7 @@ class CodeScanner(commands.Cog):
 
                 await self.send_notification(new_codes)
                 await self.redeem(new_codes, game)
-            logger.info(f"{game} >>> Code check completed")
+        logger.info(f"Code check completed")
 
     async def send_notification(self, codes: Iterable[str]):
         embed = discord.Embed(
