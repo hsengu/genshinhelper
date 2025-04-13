@@ -99,7 +99,7 @@ class RedeemCodes(commands.Cog):
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
-                    logger.info(f"\t{ctx.author.id} attempting to redeem {code} for {game} for {account}")
+                    logger.info(f"\t{ctx.author.id} attempting to redeem {code} for {game} for {account.mihoyo_id}")
 
                     try:
                         if target_uid:
@@ -123,7 +123,7 @@ class RedeemCodes(commands.Cog):
                         )
                         logger.info(f"\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
                     except genshin.errors.GenshinException as e:
-                        if e.retcode == -2017 or e.retcode == -2018:
+                        if e.retcode == -2017 or e.retcode == -2018 or e.retcode == -2004:
                             already_claimed += 1
                             logger.exception(f"\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
                         else:
