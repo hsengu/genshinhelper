@@ -128,7 +128,7 @@ class RedeemCodes(commands.Cog):
                             logger.exception(f"\t{ctx.author.id} code already claimed for {account.mihoyo_id}")
                         else:
                             logger.exception(f"\t{ctx.author.id} code can't be claimed: {e.retcode}")
-                            raise e
+                            # raise e
 
                 embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
