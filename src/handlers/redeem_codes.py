@@ -143,7 +143,7 @@ class RedeemCodes(commands.Cog):
                     embed.description = f"Code {code} is invalid."
                     logger.exceptio(f"\t{ctx.author.id} code {code} is invalid")
                 else:
-                    logger.exception(f"\{ctx.author.id} tCode can't be claimed: {e.retcode}")
+                    logger.exception(f"\t{ctx.author.id} Code can't be claimed: {e.retcode}")
                     # raise e
 
             await ctx.edit(embeds=embeds)
