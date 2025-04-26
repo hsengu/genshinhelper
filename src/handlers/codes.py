@@ -19,7 +19,7 @@ from datamodels.genshin_user import GenshinUser
 from datamodels.guild_settings import GuildSettings, GuildSettingKey
 
 
-CODE_REGEX = r"^[A-Za-z0-9]{8,20}$"
+CODE_REGEX = r"^ *[A-Za-z0-9]{8,20} *$"
 
 
 class CodeScanner(commands.Cog):
@@ -62,11 +62,11 @@ class CodeScanner(commands.Cog):
 
                 session.commit()
 
-                await self.send_notification(new_codes)
+                await self.send_notification(new_codes, game)
                 await self.redeem(new_codes, game)
         logger.info(f"Code check completed")
 
-    async def send_notification(self, codes: Iterable[str]):
+    async def send_notification(self, codes: Iterable[str], game_name: str):
         embed = discord.Embed(
             title="New codes available",
             description="\n".join(
@@ -93,7 +93,7 @@ class CodeScanner(commands.Cog):
             except Exception:
                 logger.exception("Cannot send new code notifications")
 
-    async def redeem(self, codes: Iterable[str], game_name):
+    async def redeem(self, codes: Iterable[str], game_name: str):
         accounts: List[GenshinUser] = (
             session.execute(
                 select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
