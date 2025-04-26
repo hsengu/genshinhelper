@@ -148,13 +148,21 @@ class CodeScanner(commands.Cog):
                 found = False  # whether a block of valid codes have been found
                 if content_div:
                     for ul in content_div[0].xpath('.//ul'):
-                        for code in ul.xpath('.//strong'):
+                        for code in ul.xpath('.//strong | .//b'):
                             code_text = code.text_content().strip()
                             if re.match(CODE_REGEX, code_text):
                                 found = True
                                 yield code_text
                         if found:
                             break
+                        for code in ul.xpath('.//b'):
+                            code_text = code.text_content().strip()
+                            if re.match(CODE_REGEX, code_text):
+                                found = True
+                                yield code_text
+                        if found:
+                            break
+                    
 
     def get_codes_from_text(self, data):
         """
