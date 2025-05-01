@@ -50,9 +50,9 @@ class CodeScanner(commands.Cog):
             if games[game].issubset(existing_codes):
                 logger.info(f"\t{game} >>> No new codes found")
             else:
-                logger.info(f"\t{game} >>> New code is available: {games[game]}")
-
                 new_codes = games[game] - existing_codes
+
+                logger.info(f"\t{game} >>> New code is available: {new_codes}")
 
                 for code in new_codes:
                     session.merge(RedeemableCode(code=code, working=True))
