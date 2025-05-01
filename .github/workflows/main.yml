@@ -1,0 +1,40 @@
+    name: Deploy to Hetzner
+
+    on:
+      push:
+        branches:
+          - develop
+
+    jobs:
+      build-and-push:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Login to GHCR
+            uses: docker/login-action@v3
+            with:
+              registry: ghcr.io
+              username: ${{ secrets.GHCR_USERNAME }}
+              password: ${{ secrets.GHCR_TOKEN }}
+          - name: Build and push Docker image
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              push: true
+              tags: ghcr.io/${{ github.repository }}:latest
+
+      deploy:
+        needs: build-and-push
+        runs-on: ubuntu-latest
+        steps:
+          - name: SSH into Hetzner server
+            uses: appleboy/ssh-action@v1
+            with:
+              host: ${{ secrets.HETZNER_HOST }}
+              username: ${{ secrets.HETZNER_USER }}
+              key: ${{ secrets.HETZNER_SSH_KEY }}
+              script: |
+                docker pull ghcr.io/${{ github.repository }}:latest
+                docker stop genshin-helper || true
+                docker rm genshin-helper || true
+                docker run -d --name genshin-helper ghcr.io/${{ github.repository }}:latest
