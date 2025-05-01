@@ -42,8 +42,9 @@
                 echo "${{ vars.DOCKER_COMPOSE }}" > docker-compose.yml
                 cat docker-compose.yml
                 echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-                docker pull ghcr.io/${{ github.repository }}:latest
-                docker stop genshin-helper || true
-                docker rm genshin-helper || true
+                # docker pull ghcr.io/${{ github.repository }}:latest
+                # docker stop genshin-helper || true
+                # docker rm genshin-helper || true
                 docker compose up -d
                 docker logout ghcr.io
+                rm docker-compose.yml
