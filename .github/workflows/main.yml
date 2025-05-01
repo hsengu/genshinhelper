@@ -44,7 +44,7 @@ jobs:
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
             docker stop genshin-helper || true
             docker rm genshin-helper || true
-            docker rmi genshin-helper:latest || true
+            docker rmi ghcr.io/${{ github.repository }}:latest || true
             docker compose up -d
             docker logout ghcr.io
             rm docker-compose.yml
