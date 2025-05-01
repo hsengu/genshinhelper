@@ -39,7 +39,9 @@
               username: ${{ secrets.HETZNER_USER }}
               key: ${{ secrets.HETZNER_SSH_KEY }}
               script: |
+                echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
                 docker pull ghcr.io/${{ github.repository }}:latest
                 docker stop genshin-helper || true
                 docker rm genshin-helper || true
                 docker run -d --name genshin-helper ghcr.io/${{ github.repository }}:latest
+                docker logout ghcr.io
