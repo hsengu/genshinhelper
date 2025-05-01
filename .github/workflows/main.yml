@@ -39,7 +39,7 @@
               username: ${{ secrets.HETZNER_USER }}
               key: ${{ secrets.HETZNER_SSH_KEY }}
               script: |
-                echo "DOCKER_COMPOSE=${{ vars.DOCKER_COMPOSE }}" > docker-compose.yml
+                echo "${{ vars.DOCKER_COMPOSE }}" > docker-compose.yml
                 cat docker-compose.yml
                 echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
                 docker pull ghcr.io/${{ github.repository }}:latest
