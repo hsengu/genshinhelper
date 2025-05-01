@@ -14,21 +14,22 @@ from common.logging import logger
 from datamodels.genshin_user import GenshinUser
 from datamodels.uid_mapping import UidMapping
 
-
 class RedeemCodes(commands.Cog):
     def __init__(self, bot: discord.Bot = None):
         self.bot = bot
 
     @commands.slash_command(
-        description="Redeems Genshin codes",
+        description="Redeems HoYo game codes",
         guild_ids=guild_level.get_guild_ids(level=3),
     )
     async def redeem(
         self,
         ctx: ApplicationContext,
-        codes: Option(str, "Codes separated by commas"),
+        game: Option(str, "Game to redeem for (pick 1, default is genshin): genshin,hsr,zzz", name="game", default="genshin", required=False),
+        codes: Option(str, "Codes separated by commas", required=False),
         target: Option(str, "UID or 'all' for everyone", name="for", default=False),
     ):
+        logger.info(f"{ctx.author.id} used /redeem command")
         target: str = target or "all"
         if target not in ["all", "everyone"] and not target.isdigit():
             await ctx.respond(f'Enter a specific UID or "all" for everyone')
@@ -40,6 +41,7 @@ class RedeemCodes(commands.Cog):
             uidmapping = session.get(UidMapping, (target_uid,))
             if not uidmapping:
                 await ctx.respond(f"UID not registered with this bot")
+                logger.info(f"\t{ctx.author.id} is not registered")
                 return
             accounts: List[GenshinUser] = (
                 session.execute(
@@ -60,19 +62,29 @@ class RedeemCodes(commands.Cog):
                 .all()
             )
 
-        genshin_codes = set(codes.split(","))
+        game = game.upper()
+        match game:
+            case "HSR": redeem_for = genshin.Game.STARRAIL
+            case "ZZZ": redeem_for = genshin.Game.ZZZ
+            case _: redeem_for = genshin.Game.GENSHIN
 
-        if len(genshin_codes) > 5:
+        game_codes = set(codes.split(","))
+
+        if len(game_codes) < 1:
+            await ctx.respond(f"No codes entered, doing nothing")
+            return
+        if len(game_codes) > 10:
             await ctx.respond(f"Too many codes")
+            logger.info(f"\tUser input >10 codes")
             return
 
         await ctx.defer()
         embeds = []
 
-        for code in genshin_codes:
+        for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
-                description=f"{Emoji.LOADING} Redeeming code {code}... "
+                description=f"{Emoji.LOADING} Redeeming {game} code {code}... "
             )
             embeds.append(embed)
             await ctx.edit(embeds=embeds)
@@ -82,16 +94,17 @@ class RedeemCodes(commands.Cog):
             try:
                 for i, account in enumerate(accounts):
                     embed.description = (
-                        f"{Emoji.LOADING} Redeeming code {code}... {i}/{len(accounts)}"
+                        f"{Emoji.LOADING} Redeeming {game} code {code}... {i}/{len(accounts)}"
                     )
                     await ctx.edit(embeds=embeds)
                     gs = account.client
+                    logger.info(f"\tRedeeming {code} for {game} for {account.mihoyo_id}")
 
                     try:
                         if target_uid:
-                            await gs.redeem_code(code, uid=target_uid)
+                            await gs.redeem_code(code, game=redeem_for, uid=target_uid)
                         else:
-                            await gs.redeem_code(code)
+                            await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
                     except genshin.errors.InvalidCookies:
                         account.mihoyo_token = None
@@ -107,23 +120,33 @@ class RedeemCodes(commands.Cog):
                                             f"Please register again if you want to continue using the bot."
                             )
                         )
+                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
                     except genshin.errors.GenshinException as e:
-                        if e.retcode == -2017:
+                        if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
+                            logger.exception(f"\t\t{code} is already claimed for {account.mihoyo_id}")
+                        elif e.retcode == -2004:
+                            logger.exception(f"\t\t{code} is not valid")
                         else:
-                            raise e
+                            logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
+                        break
 
-                embed.description = f"Redeemed code {code} for {redeemed} accounts."
+                embed.description = f"Redeemed {game} code {code} for {redeemed} accounts."
                 if already_claimed:
                     embed.description += (
                         f"\n{already_claimed} accounts already claimed this code."
                     )
             except genshin.errors.GenshinException as e:
-                if e.retcode == -2003:
-                    embed.description = f"Code {code} is invalid. wdf"
+                if e.retcode == -2001:
+                    embed.description = f"Code {code} has expired."
+                    logger.exception(f"\t\t{code} has already expired")
+                elif e.retcode == -2003 or e.retcode == -2004:
+                    embed.description = f"{code} is not valid."
+                    logger.exception(f"\t\t{code} is not valid")
                 else:
-                    logger.exception("Code can't be claimed")
-                    raise e
+                    logger.exception(f"\t\t{code} can't be claimed: {e.retcode}")
+                break
 
             await ctx.edit(embeds=embeds)
-            await asyncio.sleep(3)
+            await asyncio.sleep(7)
+        logger.info(f"{ctx.author.id} end of /redeem attempt")

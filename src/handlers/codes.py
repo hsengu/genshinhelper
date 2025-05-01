@@ -19,10 +19,10 @@ from datamodels.genshin_user import GenshinUser
 from datamodels.guild_settings import GuildSettings, GuildSettingKey
 
 
-CODE_REGEX = r"^[A-Za-z0-9]{10,20}$"
+CODE_REGEX = r"^ *[A-Za-z0-9]{8,20} *$"
 
 
-class GenshinCodeScanner(commands.Cog):
+class CodeScanner(commands.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
         self.start_up = False
@@ -33,43 +33,40 @@ class GenshinCodeScanner(commands.Cog):
             self.poll.start()
             self.start_up = True
 
-    @tasks.loop(minutes=5)
+    @tasks.loop(minutes=15)
     async def poll(self):
+        logger.info(f"Checking for new game codes")
         async with aiohttp.ClientSession() as http:
-            codes = set()
-            codes.update([c async for c in self.get_codes_from_pockettactics()])
-
-            for page in conf.CODE_URL:
-                async with http.get(page) as response:
-                    data = await response.read()
-                    for potential_code in self.get_codes_from_text(data.decode("utf-8")):
-                        code = potential_code.strip()
-                        if re.match(CODE_REGEX, code):
-                            codes.add(code)
+            games = {'GENSHIN': set(), 'STARRAIL': set(), 'ZZZ': set()}
+            games['GENSHIN'].update([c async for c in self.get_codes_from_pockettactics('genshin')])
+            games['STARRAIL'].update([c async for c in self.get_codes_from_pockettactics('hsr')])
+            games['ZZZ'].update([c async for c in self.get_codes_from_pockettactics('zzz')])
 
         existing_codes = set(
             session.execute(select(RedeemableCode.code)).scalars()
         )
 
-        if codes.issubset(existing_codes):
-            return
+        for game in games :
+            if games[game].issubset(existing_codes):
+                logger.info(f"\t{game} >>> No new codes found")
+            else:
+                new_codes = games[game] - existing_codes
 
-        logger.info(f"New code is available: {codes}")
+                logger.info(f"\t{game} >>> New code is available: {new_codes}")
 
-        new_codes = codes - existing_codes
+                for code in new_codes:
+                    session.merge(RedeemableCode(code=code, working=True))
 
-        for code in new_codes:
-            session.merge(RedeemableCode(code=code, working=True))
+                for code in existing_codes - games[game]:
+                    session.merge(RedeemableCode(code=code, working=False))
 
-        for code in existing_codes - codes:
-            session.merge(RedeemableCode(code=code, working=False))
+                session.commit()
 
-        session.commit()
+                await self.send_notification(new_codes, game)
+                await self.redeem(new_codes, game)
+        logger.info(f"Code check completed")
 
-        await self.send_notification(new_codes)
-        await self.redeem(new_codes)
-
-    async def send_notification(self, codes: Iterable[str]):
+    async def send_notification(self, codes: Iterable[str], game_name: str):
         embed = discord.Embed(
             title="New codes available",
             description="\n".join(
@@ -96,35 +93,46 @@ class GenshinCodeScanner(commands.Cog):
             except Exception:
                 logger.exception("Cannot send new code notifications")
 
-    async def redeem(self, codes: Iterable[str]):
+    async def redeem(self, codes: Iterable[str], game_name: str):
         accounts: List[GenshinUser] = (
             session.execute(
                 select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
             ).scalars().all()
         )
 
+        match game_name:
+            case 'GENSHIN': redeem_game = genshin.Game.GENSHIN
+            case 'STARRAIL': redeem_game = genshin.Game.STARRAIL
+            case 'ZZZ': redeem_game = genshin.Game.ZZZ
+
         for code in codes:
             queue = []
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
-                logger.info(f"Redeeming code {code} for account {account.mihoyo_id}")
-                queue.append(asyncio.create_task(account.client.redeem_code(code=code)))
+                logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
+                queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
 
             results = await asyncio.gather(*queue, return_exceptions=True)
 
             if results and isinstance(results[0], genshin.errors.RedemptionInvalid):
                 session.merge(RedeemableCode(code=code, working=False))
-                logger.info(f"Code {code} expired. Updating database")
+                logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(results)
             await asyncio.sleep(5)
 
         session.commit()
 
-    async def get_codes_from_pockettactics(self):
+    async def get_codes_from_pockettactics(self, game):
         async with aiohttp.ClientSession() as session:
-            url = "https://www.pockettactics.com/genshin-impact/codes"
+            match game:
+                case 'genshin':
+                    url = "https://www.pockettactics.com/genshin-impact/codes"
+                case 'hsr':
+                    url = "https://www.pockettactics.com/honkai-star-rail/codes"
+                case 'zzz':
+                    url = "https://www.pockettactics.com/zenless-zone-zero/codes"
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
             }
@@ -140,13 +148,21 @@ class GenshinCodeScanner(commands.Cog):
                 found = False  # whether a block of valid codes have been found
                 if content_div:
                     for ul in content_div[0].xpath('.//ul'):
-                        for code in ul.xpath('.//strong'):
+                        for code in ul.xpath('.//strong | .//b'):
                             code_text = code.text_content().strip()
                             if re.match(CODE_REGEX, code_text):
                                 found = True
                                 yield code_text
                         if found:
                             break
+                        for code in ul.xpath('.//b'):
+                            code_text = code.text_content().strip()
+                            if re.match(CODE_REGEX, code_text):
+                                found = True
+                                yield code_text
+                        if found:
+                            break
+                    
 
     def get_codes_from_text(self, data):
         """

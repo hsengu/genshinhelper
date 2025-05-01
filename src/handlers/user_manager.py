@@ -303,7 +303,7 @@ ALL_PREFERENCES = [
         guild_level=2,
     ),
     PreferenceOption(
-        label="Auto code redemption",
+        label="Auto code redemption for HoYo games",
         description="New codes are auto-redeemed when found",
         value=Preferences.AUTO_REDEEM,
         guild_level=3,

@@ -1,9 +1,10 @@
 .env
 *.DS_Store
 *.db
+.venv
 .idea/
-venv/
 build/
 dist/
 test/
+app/
 __pycache__

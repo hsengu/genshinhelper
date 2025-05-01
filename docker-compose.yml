@@ -1,0 +1,15 @@
+services:
+  genshin-helper:
+    container_name: genshin-helper
+    image: genshin-helper:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    volumes:
+      - /var/discord/genshinhelper/genshinhelper.db:/app/genshinhelper.db
+    environment:
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
+    network_mode: bridge
