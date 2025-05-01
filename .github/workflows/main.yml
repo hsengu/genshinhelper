@@ -10,6 +10,10 @@
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
+          - name: Create .env file
+            run: |
+              echo "ENV_FILE=${{ secrets.ENV_FILE }}" >> .env
+              cat .env # Optional: Print the .env file content for debugging
           - name: Login to GHCR
             uses: docker/login-action@v3
             with:
