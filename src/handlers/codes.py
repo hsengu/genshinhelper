@@ -119,7 +119,7 @@ class CodeScanner(commands.Cog):
                 session.merge(RedeemableCode(code=code, working=False))
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
-            logger.info(results)
+            logger.info(f"\t {game_name} >>> Results: {results}")
             await asyncio.sleep(5)
 
         session.commit()
