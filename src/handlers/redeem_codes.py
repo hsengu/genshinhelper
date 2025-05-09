@@ -3,6 +3,7 @@ from typing import List
 
 import discord
 import genshin.errors
+import re
 from discord import Option, ApplicationContext
 from discord.ext import commands
 from sqlalchemy import select
@@ -26,7 +27,7 @@ class RedeemCodes(commands.Cog):
         self,
         ctx: ApplicationContext,
         game: Option(str, "Game to redeem for (pick 1, default is genshin): genshin,hsr,zzz", name="game", default="genshin", required=False),
-        codes: Option(str, "Codes separated by commas", required=False),
+        codes: Option(str, "Codes separated by commas or spaces", required=False),
         target: Option(str, "UID or 'all' for everyone", name="for", default=False),
     ):
         logger.info(f"{ctx.author.id} used /redeem command")
@@ -68,7 +69,7 @@ class RedeemCodes(commands.Cog):
             case "ZZZ": redeem_for = genshin.Game.ZZZ
             case _: redeem_for = genshin.Game.GENSHIN
 
-        game_codes = set(codes.split(","))
+        game_codes = set(re.sub(r'\s+',',',codes).split(","))
 
         if len(game_codes) < 1:
             await ctx.respond(f"No codes entered, doing nothing")
