@@ -69,7 +69,8 @@ class RedeemCodes(commands.Cog):
             case "ZZZ": redeem_for = genshin.Game.ZZZ
             case _: redeem_for = genshin.Game.GENSHIN
 
-        game_codes = set(re.sub(r'\s+',',',codes).split(","))
+        game_codes = set(re.sub(r'(?![a-zA-Z0-9]+).',',',codes).split(","))
+        game_codes.discard('')
 
         if len(game_codes) < 1:
             await ctx.respond(f"No codes entered, doing nothing")
