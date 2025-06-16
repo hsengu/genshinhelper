@@ -107,7 +107,7 @@ class RedeemCodes(commands.Cog):
                         else:
                             await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
-                    except genshin.errors.InvalidCookies:
+                    except genshin.errors.InvalidCookies as e:
                         account.mihoyo_token = None
                         session.merge(account)
                         session.commit()
@@ -121,7 +121,7 @@ class RedeemCodes(commands.Cog):
                                             f"Please register again if you want to continue using the bot."
                             )
                         )
-                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}")
+                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}: {e.retcode}")
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
