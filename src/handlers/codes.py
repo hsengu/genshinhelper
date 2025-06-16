@@ -27,6 +27,11 @@ class CodeScanner(commands.Cog):
         self.bot = bot
         self.start_up = False
 
+    @commands.slash_command(
+        description="Redeems HoYo game codes",
+        guild_ids=guild_level.get_guild_ids(level=3),
+    )
+
     @commands.Cog.listener()
     async def on_ready(self):
         if not self.start_up:
