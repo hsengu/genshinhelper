@@ -16,9 +16,11 @@ class GenshinUser(Base):
     mihoyo_id = Column(Integer, primary_key=True)
     discord_id = Column(Integer, nullable=False, index=True)
 
+    stoken = Column(String(100))  # for Cookie renewal
     mihoyo_token = Column(String(100))  # for Code redemption, a.k.a. cookie_token
     hoyolab_token = Column(String(100))  # for Hoyolab access, a.k.a. ltoken
     mihoyo_authkey = Column(Text)  # Deprecated
+    stoken = Column(String(100))
 
     # Associated UIDs
     # Useful if user wants to filter out alt accounts
@@ -51,26 +53,31 @@ class GenshinUser(Base):
             yield "cookie_token"
 
     @property
-    def cookies(self) -> dict:
+    async def cookies(self) -> dict:
         base = {
+            "stoken": self.stoken,
             "ltuid": self.mihoyo_id,
             "ltuid_v2": self.mihoyo_id,
             "account_id": self.mihoyo_id,
             "account_id_v2": self.mihoyo_id,
         }
+        if self.stoken:
+            result = await genshin.fetch_cookie_with_stoken_v2(base, token_types=[2, 4])
+            base["hoyolab_token"] = result['ltoken_v2']
+            base["mihoyo_token"] = result['cookie_token_v2']
+        else:
+            if self.hoyolab_token:
+                if self.hoyolab_token.startswith("v2_"):
+                    base["ltoken_v2"] = self.hoyolab_token
+                elif self.hoyolab_token.startswith("{"):
+                    base.update(json.loads(self.hoyolab_token))
+            elif self.hoyolab_token:
+                base["ltoken"] = self.hoyolab_token
 
-        if self.hoyolab_token:
-            if self.hoyolab_token.startswith("v2_"):
-                base["ltoken_v2"] = self.hoyolab_token
-            elif self.hoyolab_token.startswith("{"):
-                base.update(json.loads(self.hoyolab_token))
-        elif self.hoyolab_token:
-            base["ltoken"] = self.hoyolab_token
-
-        if self.mihoyo_token and self.mihoyo_token.startswith("v2_"):
-            base["cookie_token_v2"] = self.mihoyo_token
-        elif self.mihoyo_token:
-            base["cookie_token"] = self.mihoyo_token
+            if self.mihoyo_token and self.mihoyo_token.startswith("v2_"):
+                base["cookie_token_v2"] = self.mihoyo_token
+            elif self.mihoyo_token:
+                base["cookie_token"] = self.mihoyo_token
 
         return base
 

@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import genshin
 from typing import List
 
 import discord
@@ -50,11 +51,19 @@ class UserManager(commands.Cog):
     async def register(
             self,
             ctx: ApplicationContext,
+            stoken: Option(str, "HoYo stoken", required=False),
             ltmid_v2: Option(str, "Hoyolab login token v2", required=False),
             ltoken_v2: Option(str, "Hoyolab login token v2", required=False),
             ltuid_v2: Option(int, "Mihoyo account ID v2", required=False),
             cookie_token_v2: Option(str, "genshin.hoyoverse.com cookie_token v2", required=False),
     ):
+        cookies = {
+            "stoken": stoken,
+            "ltuid_v2": ltuid_v2,
+            "ltmid_v2": ltmid_v2,
+            "account_id_v2": ltuid_v2,
+            "account_mid_v2": ltmid_v2
+        }
         ltuid = ltuid_v2
         ltoken = json.dumps({"ltoken_v2": ltoken_v2, "ltmid_v2": ltmid_v2}, separators=(',', ':'))
         cookie_token = cookie_token_v2
@@ -83,10 +92,16 @@ class UserManager(commands.Cog):
         else:
             account = GenshinUser(discord_id=discord_id, mihoyo_id=ltuid)
 
-        if ltoken:
-            account.hoyolab_token = ltoken
-        if cookie_token:
-            account.mihoyo_token = cookie_token
+        if stoken:
+            result = await genshin.fetch_cookie_with_stoken_v2(cookies, token_types=[2, 4])
+            account.hoyolab_token = result['ltoken_v2']
+            account.mihoyo_token = result['cookie_token_v2']
+        else:
+            if ltoken:
+                account.hoyolab_token = ltoken
+            if cookie_token:
+                account.mihoyo_token = cookie_token
+            if lt
 
         session.merge(account)
 
