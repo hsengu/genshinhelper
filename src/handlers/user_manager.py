@@ -101,7 +101,6 @@ class UserManager(commands.Cog):
                 account.hoyolab_token = ltoken
             if cookie_token:
                 account.mihoyo_token = cookie_token
-            if lt
 
         session.merge(account)
 
