@@ -40,6 +40,8 @@ class GenshinUser(Base):
             "account_id_v2": self.mihoyo_id,
         }
 
+        new_cookies = self.getCookies(base)
+
         if self.hoyolab_token:
             try:
                 await gs.get_reward_info()
@@ -48,8 +50,9 @@ class GenshinUser(Base):
                 logger.info("ltoken is not valid or has expired")
                 if self.stoken:
                     logger.info("stoken found, attempting to renew ltoken")
-                    result = self.getCookies(base)
-                    self.hoyolab_token = result['ltoken_v2']
+                    if result:
+                        self.hoyolab_token = new_cookies['ltoken_v2']
+                        yield "ltoken"
             except Exception:
                 pass
             yield "ltoken"
@@ -62,14 +65,18 @@ class GenshinUser(Base):
                 logger.info("cookie_token is not valid or has expired")
                 if self.stoken:
                     logger.info("stoken found, attempting to renew cookie token")
-                    self.mihoyo_token = result['cookie_token_v2']
+                    result = self.getCookies(base)
+                    if result:
+                        self.mihoyo_token = new_cookies['cookie_token_v2']
+                        yield "cookie_token"
             except Exception:
                 pass
             yield "cookie_token"
 
     async def getCookies(self, base_cookies):
         cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])
-        return await cookies
+        if cookies['stoken']:
+            return cookies
 
     @property
     def cookies(self) -> dict:
