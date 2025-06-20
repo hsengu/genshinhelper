@@ -94,8 +94,6 @@ class UserManager(commands.Cog):
 
         if stoken:
             result = await genshin.fetch_cookie_with_stoken_v2(cookies, token_types=[2, 4])
-            logger.info(result)
-            account.stoken = stoken
             account.hoyolab_token = result['ltoken_v2']
             account.mihoyo_token = result['cookie_token_v2']
         else:

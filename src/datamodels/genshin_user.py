@@ -7,6 +7,7 @@ from sqlalchemy import Integer, String, Column, Text
 from sqlalchemy.orm import relationship
 
 import common.constants
+from common.logging import logger
 from datamodels import Base
 
 
@@ -20,7 +21,6 @@ class GenshinUser(Base):
     mihoyo_token = Column(String(100))  # for Code redemption, a.k.a. cookie_token
     hoyolab_token = Column(String(100))  # for Hoyolab access, a.k.a. ltoken
     mihoyo_authkey = Column(Text)  # Deprecated
-    stoken = Column(String(100))
 
     # Associated UIDs
     # Useful if user wants to filter out alt accounts
@@ -32,12 +32,24 @@ class GenshinUser(Base):
     async def validate(self):
         gs = self.client
 
+        base = {
+            "stoken": self.stoken,
+            "ltuid": self.mihoyo_id,
+            "ltuid_v2": self.mihoyo_id,
+            "account_id": self.mihoyo_id,
+            "account_id_v2": self.mihoyo_id,
+        }
+
         if self.hoyolab_token:
             try:
                 await gs.get_reward_info()
             except genshin.errors.InvalidCookies:
                 self.hoyolab_token = None
-                raise TokenExpiredError("ltoken is not valid or has expired")
+                logger.info("ltoken is not valid or has expired")
+                if self.stoken:
+                    logger.info("stoken found, attempting to renew ltoken")
+                    result = self.getCookies(base)
+                    self.hoyolab_token = result['ltoken_v2']
             except Exception:
                 pass
             yield "ltoken"
@@ -47,13 +59,20 @@ class GenshinUser(Base):
                 await gs.redeem_code("GENSHIN123")  # Using a random code to validate cookies
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
-                raise TokenExpiredError("cookie_token is not valid or has expired")
+                logger.info("cookie_token is not valid or has expired")
+                if self.stoken:
+                    logger.info("stoken found, attempting to renew cookie token")
+                    self.mihoyo_token = result['cookie_token_v2']
             except Exception:
                 pass
             yield "cookie_token"
 
+    async def getCookies(self, base_cookies):
+        cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])
+        return await cookies
+
     @property
-    async def cookies(self) -> dict:
+    def cookies(self) -> dict:
         base = {
             "stoken": self.stoken,
             "ltuid": self.mihoyo_id,
@@ -61,23 +80,19 @@ class GenshinUser(Base):
             "account_id": self.mihoyo_id,
             "account_id_v2": self.mihoyo_id,
         }
-        if self.stoken:
-            result = await genshin.fetch_cookie_with_stoken_v2(base, token_types=[2, 4])
-            base["hoyolab_token"] = result['ltoken_v2']
-            base["mihoyo_token"] = result['cookie_token_v2']
-        else:
-            if self.hoyolab_token:
-                if self.hoyolab_token.startswith("v2_"):
-                    base["ltoken_v2"] = self.hoyolab_token
-                elif self.hoyolab_token.startswith("{"):
-                    base.update(json.loads(self.hoyolab_token))
-            elif self.hoyolab_token:
-                base["ltoken"] = self.hoyolab_token
 
-            if self.mihoyo_token and self.mihoyo_token.startswith("v2_"):
-                base["cookie_token_v2"] = self.mihoyo_token
-            elif self.mihoyo_token:
-                base["cookie_token"] = self.mihoyo_token
+        if self.hoyolab_token:
+            if self.hoyolab_token.startswith("v2_"):
+                base["ltoken_v2"] = self.hoyolab_token
+            elif self.hoyolab_token.startswith("{"):
+                base.update(json.loads(self.hoyolab_token))
+        elif self.hoyolab_token:
+            base["ltoken"] = self.hoyolab_token
+
+        if self.mihoyo_token and self.mihoyo_token.startswith("v2_"):
+            base["cookie_token_v2"] = self.mihoyo_token
+        elif self.mihoyo_token:
+            base["cookie_token"] = self.mihoyo_token
 
         return base
 
@@ -103,7 +118,6 @@ class GenshinUser(Base):
         for mapping in self.uid_mappings:
             if mapping.main:
                 return mapping.uid
-
 
 class TokenExpiredError(Exception):
     pass
