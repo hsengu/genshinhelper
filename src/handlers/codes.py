@@ -110,6 +110,7 @@ class CodeScanner(commands.Cog):
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
+                account.validate()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
 
