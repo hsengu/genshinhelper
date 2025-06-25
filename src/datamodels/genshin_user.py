@@ -7,6 +7,7 @@ from sqlalchemy import Integer, String, Column, Text
 from sqlalchemy.orm import relationship
 
 import common.constants
+from common.logging import logger
 from datamodels import Base
 
 
@@ -16,6 +17,7 @@ class GenshinUser(Base):
     mihoyo_id = Column(Integer, primary_key=True)
     discord_id = Column(Integer, nullable=False, index=True)
 
+    stoken = Column(String(100))  # for Cookie renewal
     mihoyo_token = Column(String(100))  # for Code redemption, a.k.a. cookie_token
     hoyolab_token = Column(String(100))  # for Hoyolab access, a.k.a. ltoken
     mihoyo_authkey = Column(Text)  # Deprecated
@@ -30,12 +32,27 @@ class GenshinUser(Base):
     async def validate(self):
         gs = self.client
 
+        base = {
+            "stoken": self.stoken,
+            "ltuid": self.mihoyo_id,
+            "ltuid_v2": self.mihoyo_id,
+            "account_id": self.mihoyo_id,
+            "account_id_v2": self.mihoyo_id,
+        }
+
+        new_cookies = self.getCookies(base)
+
         if self.hoyolab_token:
             try:
                 await gs.get_reward_info()
             except genshin.errors.InvalidCookies:
                 self.hoyolab_token = None
-                raise TokenExpiredError("ltoken is not valid or has expired")
+                logger.info("ltoken is not valid or has expired")
+                if self.stoken:
+                    logger.info("stoken found, attempting to renew ltoken")
+                    if result:
+                        self.hoyolab_token = new_cookies['ltoken_v2']
+                        yield "ltoken"
             except Exception:
                 pass
             yield "ltoken"
@@ -45,14 +62,26 @@ class GenshinUser(Base):
                 await gs.redeem_code("GENSHIN123")  # Using a random code to validate cookies
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
-                raise TokenExpiredError("cookie_token is not valid or has expired")
+                logger.info("cookie_token is not valid or has expired")
+                if self.stoken:
+                    logger.info("stoken found, attempting to renew cookie token")
+                    result = self.getCookies(base)
+                    if result:
+                        self.mihoyo_token = new_cookies['cookie_token_v2']
+                        yield "cookie_token"
             except Exception:
                 pass
             yield "cookie_token"
 
+    async def getCookies(self, base_cookies):
+        cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])
+        if cookies['stoken']:
+            return cookies
+
     @property
     def cookies(self) -> dict:
         base = {
+            "stoken": self.stoken,
             "ltuid": self.mihoyo_id,
             "ltuid_v2": self.mihoyo_id,
             "account_id": self.mihoyo_id,
@@ -96,7 +125,6 @@ class GenshinUser(Base):
         for mapping in self.uid_mappings:
             if mapping.main:
                 return mapping.uid
-
 
 class TokenExpiredError(Exception):
     pass

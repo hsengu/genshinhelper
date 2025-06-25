@@ -340,7 +340,7 @@ class RealTimeNotesMonitor(commands.Cog):
             tasks.append(asyncio.create_task(self.check_accounts(discord_id)))
 
         try:
-            await asyncio.gather(*tasks)
+            asyncio.gather(*tasks)
             logger.info("Finished periodic real-time notes check")
         except Exception:
             logger.exception("Failure to check real-time notes")
