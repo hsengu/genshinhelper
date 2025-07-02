@@ -124,21 +124,13 @@ class RedeemCodes(commands.Cog):
                         )
                         logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}: {e.retcode}")
                         logger.info(f"\t\t{ctx.author.id} attempt to renew for {account.mihoyo_id}")
-                        renew = await account.validate()
-                        if renew == 'cookie_token':
-                            logger.info(f"\t\t{ctx.author.id} renewed cookie_token for {account.mihoyo_id}")
-                            await dm_channel.send(
+                        async for item in account.validate():
+                            messages += [f":white_check_mark: {item} is valid"]
+                            await ctx.edit(
                                 embed=discord.Embed(
-                                    title=":check: Cookie Token Renewal",
-                                    description=f"Your cookie_token been renewed for Hoyolab ID {account.mihoyo_id}.\n"
-                                )
-                            )
-                        else:
-                            logger.info(f"\t\t{ctx.author.id} failed to renew for {account.mihoyo_id}")
-                            await dm_channel.send(
-                                embed=discord.Embed(
-                                    title=":X: Cookie Token Renewal",
-                                    description=f"Your cookie_token failed to renew for Hoyolab ID {account.mihoyo_id}.\n"
+                                    description="\n".join(
+                                        messages + [Emoji.LOADING + " verifying..."]
+                                    )
                                 )
                             )
                     except genshin.errors.GenshinException as e:
