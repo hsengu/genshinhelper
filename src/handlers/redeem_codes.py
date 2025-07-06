@@ -124,6 +124,7 @@ class RedeemCodes(commands.Cog):
                         )
                         logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}: {e.retcode}")
                         logger.info(f"\t\t{ctx.author.id} attempt to renew for {account.mihoyo_id}")
+                        messages = []
                         async for item in account.validate():
                             messages += [f":white_check_mark: {item} is valid"]
                             await ctx.edit(
