@@ -109,9 +109,7 @@ class RedeemCodes(commands.Cog):
                             await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
                     except genshin.errors.InvalidCookies as e:
-                        account.mihoyo_token = None
-                        session.merge(account)
-                        session.commit()
+                        # account.mihoyo_token = None
                         user = await self.bot.fetch_user(account.discord_id)
                         dm_channel = await self.bot.create_dm(user)
                         await dm_channel.send(
@@ -134,6 +132,8 @@ class RedeemCodes(commands.Cog):
                                     )
                                 )
                             )
+                        session.merge(account)
+                        session.commit()
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1

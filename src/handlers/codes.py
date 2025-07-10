@@ -114,6 +114,8 @@ class CodeScanner(commands.Cog):
                 async for item in account.validate():
                     messages += [f":white_check_mark: {item} is valid"]
                     logger.info(f"\t{messages}")
+                session.merge(account)
+                session.commit()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
 
