@@ -50,7 +50,7 @@ class GenshinUser(Base):
                 logger.info("ltoken is not valid or has expired")
                 if self.stoken:
                     logger.info("stoken found, attempting to renew ltoken")
-                    if result:
+                    if new_cookies:
                         self.hoyolab_token = new_cookies['ltoken_v2']
                         yield "ltoken"
             except Exception:
@@ -65,8 +65,7 @@ class GenshinUser(Base):
                 logger.info("cookie_token is not valid or has expired")
                 if self.stoken:
                     logger.info("stoken found, attempting to renew cookie token")
-                    result = self.getCookies(base)
-                    if result:
+                    if new_cookies:
                         self.mihoyo_token = new_cookies['cookie_token_v2']
                         yield "cookie_token"
             except Exception:
