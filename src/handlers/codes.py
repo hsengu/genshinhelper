@@ -111,9 +111,10 @@ class CodeScanner(commands.Cog):
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
                 messages = []
+                logger.info(f"\tValidating {account.mihoyo_id}")
                 async for item in account.validate():
-                    messages += [f":white_check_mark: {item} is valid"]
-                    logger.info(f"\t{messages}")
+                    messages += [f"{item} is valid for {account.mihoyo_id}"]
+                logger.info(f"\t\t{messages}")
                 session.merge(account)
                 session.commit()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
@@ -126,7 +127,7 @@ class CodeScanner(commands.Cog):
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(f"\t {game_name} >>> Results: {results}")
-            await asyncio.sleep(5)
+            await asyncio.sleep(7)
 
         session.commit()
 
