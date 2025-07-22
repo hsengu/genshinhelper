@@ -119,7 +119,8 @@ class CodeScanner(commands.Cog):
                 session.commit()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
-
+                await asyncio.sleep(7)
+                
             results = await asyncio.gather(*queue, return_exceptions=True)
 
             if results and isinstance(results[0], genshin.errors.RedemptionInvalid):
@@ -127,7 +128,6 @@ class CodeScanner(commands.Cog):
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(f"\t {game_name} >>> Results: {results}")
-            await asyncio.sleep(7)
 
         session.commit()
 
