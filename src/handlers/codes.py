@@ -119,7 +119,7 @@ class CodeScanner(commands.Cog):
                 session.commit()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
-                queue.append(asyncio.sleep(5))
+                queue.append(asyncio.create_task(asyncio.sleep(5)))
 
             results = await asyncio.gather(*queue, return_exceptions=True)
 
