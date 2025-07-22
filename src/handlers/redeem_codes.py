@@ -124,14 +124,8 @@ class RedeemCodes(commands.Cog):
                         logger.info(f"\t\t{ctx.author.id} attempt to renew for {account.mihoyo_id}")
                         messages = []
                         async for item in account.validate():
-                            messages += [f":white_check_mark: {item} is valid"]
-                            await ctx.edit(
-                                embed=discord.Embed(
-                                    description="\n".join(
-                                        messages + [Emoji.LOADING + " verifying..."]
-                                    )
-                                )
-                            )
+                            messages += [f"{item} is valid for {account.mihoyo_id}"]
+                        logger.info(f"\t\t{messages}")
                         session.merge(account)
                         session.commit()
                     except genshin.errors.GenshinException as e:
