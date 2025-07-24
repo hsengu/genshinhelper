@@ -177,13 +177,13 @@ class CodeScanner(commands.Cog):
             if not account.settings[Preferences.AUTO_REDEEM]:
                 continue
         
-        messages = []
-        logger.info(f"\tValidating {account.mihoyo_id}")
-        async for item in account.validate():
-            messages += [f"{item} is valid for {account.mihoyo_id}"]
-        logger.info(f"\t\t{messages}")
-        session.merge(account)
-        session.commit()
+            messages = []
+            logger.info(f"\tValidating {account.mihoyo_id}")
+            async for item in account.validate():
+                messages += [f"{item} is valid for {account.mihoyo_id}"]
+            logger.info(f"\t\t{messages}")
+            session.merge(account)
+            session.commit()
 
     def get_codes_from_text(self, data):
         """
