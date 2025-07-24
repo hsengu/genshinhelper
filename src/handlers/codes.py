@@ -46,6 +46,8 @@ class CodeScanner(commands.Cog):
             session.execute(select(RedeemableCode.code)).scalars()
         )
 
+        await self.validateTokens()
+
         for game in games :
             if games[game].issubset(existing_codes):
                 logger.info(f"\t{game} >>> No new codes found")
@@ -110,13 +112,6 @@ class CodeScanner(commands.Cog):
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
-                messages = []
-                logger.info(f"\tValidating {account.mihoyo_id}")
-                async for item in account.validate():
-                    messages += [f"{item} is valid for {account.mihoyo_id}"]
-                logger.info(f"\t\t{messages}")
-                session.merge(account)
-                session.commit()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
                 queue.append(asyncio.create_task(asyncio.sleep(5)))
@@ -171,6 +166,24 @@ class CodeScanner(commands.Cog):
                         if found:
                             break
                     
+    async def validateTokens(self):
+        accounts: List[GenshinUser] = (
+            session.execute(
+                select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
+            ).scalars().all()
+        )
+
+        for account in accounts:
+            if not account.settings[Preferences.AUTO_REDEEM]:
+                continue
+        
+        messages = []
+        logger.info(f"\tValidating {account.mihoyo_id}")
+        async for item in account.validate():
+            messages += [f"{item} is valid for {account.mihoyo_id}"]
+        logger.info(f"\t\t{messages}")
+        session.merge(account)
+        session.commit()
 
     def get_codes_from_text(self, data):
         """
