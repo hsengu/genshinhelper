@@ -83,6 +83,8 @@ class RedeemCodes(commands.Cog):
         await ctx.defer()
         embeds = []
 
+        await self.validateTokens()
+
         for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
@@ -120,14 +122,6 @@ class RedeemCodes(commands.Cog):
                                             f"Please register again if you want to continue using the bot."
                             )
                         )
-                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}: {e.retcode}")
-                        logger.info(f"\t\t{ctx.author.id} attempt to renew for {account.mihoyo_id}")
-                        messages = []
-                        async for item in account.validate():
-                            messages += [f"{item} is valid for {account.mihoyo_id}"]
-                        logger.info(f"\t\t{messages}")
-                        session.merge(account)
-                        session.commit()
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
@@ -157,3 +151,22 @@ class RedeemCodes(commands.Cog):
             await ctx.edit(embeds=embeds)
             await asyncio.sleep(7)
         logger.info(f"{ctx.author.id} end of /redeem attempt")
+
+    async def validateTokens(self):
+        accounts: List[GenshinUser] = (
+            session.execute(
+                select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
+            ).scalars().all()
+        )
+
+        for account in accounts:
+            if not account.settings[Preferences.AUTO_REDEEM]:
+                continue
+        
+            messages = []
+            logger.info(f"\tValidating {account.mihoyo_id}")
+            async for item in account.validate():
+                messages += [f"{item} is valid for {account.mihoyo_id}"]
+            logger.info(f"\t\t{messages}")
+            session.merge(account)
+            session.commit()
