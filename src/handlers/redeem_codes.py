@@ -164,7 +164,7 @@ class RedeemCodes(commands.Cog):
                 continue
         
             messages = []
-            logger.info(f"\tValidating {account.mihoyo_id}")
+            # logger.info(f"\tValidating {account.mihoyo_id}")
             async for item in account.validate():
                 messages += [f"{item} is valid for {account.mihoyo_id}"]
             # logger.info(f"\t\t{messages}")
