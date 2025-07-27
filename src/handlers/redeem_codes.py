@@ -9,7 +9,7 @@ from discord.ext import commands
 from sqlalchemy import select
 
 from common import guild_level
-from common.constants import Emoji
+from common.constants import Emoji, Preferences
 from common.db import session
 from common.logging import logger
 from datamodels.genshin_user import GenshinUser
