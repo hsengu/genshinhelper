@@ -76,6 +76,8 @@ class GenshinUser(Base):
             except Exception:
                 pass
             yield "cookie_token"
+        else:
+            logger.info("WHAAAAAAT")
         logger.info(f"\t\t{messages}")
 
     async def getCookies(self, base_cookies):
