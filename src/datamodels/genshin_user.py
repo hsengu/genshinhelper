@@ -63,7 +63,6 @@ class GenshinUser(Base):
         if self.mihoyo_token:
             try:
                 await gs.redeem_code("GENSHIN123") # Using a random code to validate cookies
-                messages += ["cookie_token is valid"]  
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
                 messages += ["cookie_token is not valid or has expired"]
@@ -74,7 +73,7 @@ class GenshinUser(Base):
                     else:
                         messages += ["cokie_token renewal failed"]
             except Exception as e:
-                logger.info(e)
+                messages += ["cookie_token is valid"]  
                 pass
             yield "cookie_token"
         else:
