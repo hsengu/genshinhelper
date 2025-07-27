@@ -181,7 +181,7 @@ class CodeScanner(commands.Cog):
             logger.info(f"\tValidating {account.mihoyo_id}")
             async for item in account.validate():
                 messages += [f"{item} is valid for {account.mihoyo_id}"]
-            logger.info(f"\t\t{messages}")
+            # logger.info(f"\t\t{messages}")
             session.merge(account)
             session.commit()
 
