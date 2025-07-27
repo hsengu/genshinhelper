@@ -53,7 +53,6 @@ class GenshinUser(Base):
                     logger.info("stoken found, attempting to renew ltoken")
                     if new_cookies:
                         self.hoyolab_token = new_cookies['ltoken_v2']
-                        yield "ltoken"
             except Exception:
                 pass
             yield "ltoken"
@@ -69,7 +68,6 @@ class GenshinUser(Base):
                     logger.info("stoken found, attempting to renew cookie token")
                     if new_cookies:
                         self.mihoyo_token = new_cookies['cookie_token_v2']
-                        yield "cookie_token"
             except Exception:
                 pass
             yield "cookie_token"
