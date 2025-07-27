@@ -76,6 +76,7 @@ class GenshinUser(Base):
                     else:
                         messages += ["cokie_token renewal failed"]
             except Exception:
+                logger.info("WHAAAAAAT33333333")
                 pass
             yield "cookie_token"
         else:
