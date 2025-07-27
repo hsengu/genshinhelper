@@ -46,14 +46,14 @@ class GenshinUser(Base):
         if self.hoyolab_token:
             try:
                 await gs.get_reward_info()
-                messages += "\t\tltoken is valid"
+                messages += ["\t\tltoken is valid"]
             except genshin.errors.InvalidCookies:
                 self.hoyolab_token = None
-                logger.info("ltoken is not valid or has expired")
+                messages += ["ltoken is not valid or has expired"]
                 if self.stoken:
-                    logger.info("stoken found, attempting to renew ltoken")
                     if new_cookies:
                         self.hoyolab_token = new_cookies['ltoken_v2']
+                        messages += ["ltoken renewed"]
             except Exception:
                 pass
             yield "ltoken"
@@ -61,14 +61,14 @@ class GenshinUser(Base):
         if self.mihoyo_token:
             try:
                 await gs.redeem_code("GENSHIN123")
-                messages += "\t\tcookie_token is valid"  # Using a random code to validate cookies
+                messages += ["\t\tcookie_token is valid"]  # Using a random code to validate cookies
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
-                logger.info("cookie_token is not valid or has expired")
+                messages += ["cookie_token is not valid or has expired"]
                 if self.stoken:
-                    logger.info("stoken found, attempting to renew cookie token")
                     if new_cookies:
                         self.mihoyo_token = new_cookies['cookie_token_v2']
+                        messages += ["cookie_token renewed"]
             except Exception:
                 pass
             yield "cookie_token"
