@@ -60,7 +60,9 @@ class GenshinUser(Base):
                 pass
             yield "ltoken"
 
+        logger.info("WHAAAAAAT1111111")
         if self.mihoyo_token:
+            logger.info("WHAAAAAAT2222222")
             try:
                 await gs.redeem_code("GENSHIN123") # Using a random code to validate cookies
                 messages += ["cookie_token is valid"]  
