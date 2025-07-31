@@ -2,6 +2,7 @@ import json
 from typing import Dict, Any, List, Optional
 
 import genshin
+import asyncio
 from genshin import Game
 from sqlalchemy import Integer, String, Column, Text
 from sqlalchemy.orm import relationship
@@ -63,6 +64,7 @@ class GenshinUser(Base):
         if self.mihoyo_token:
             try:
                 await gs.redeem_code("GENSHIN123") # Using a random code to validate cookies
+                await asyncio.sleep(7)
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
                 messages += ["cookie_token is not valid or has expired"]
