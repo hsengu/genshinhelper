@@ -73,12 +73,11 @@ class GenshinUser(Base):
                         messages += ["cookie_token renewed"]
                     else:
                         messages += ["cokie_token renewal failed"]
-                    await asyncio.sleep(7)
             except Exception as e:
                 messages += ["cookie_token is valid"]
-                await asyncio.sleep(7)
                 pass
             yield "cookie_token"
+            await asyncio.sleep(7)
             
         logger.info(f"\t\t{messages}")
 
