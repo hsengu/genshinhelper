@@ -171,7 +171,7 @@ class CodeScanner(commands.Cog):
             ).scalars().all()
         )
 
-        delay = 1 if len(accounts) else 7/len(accounts)
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
 
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:
