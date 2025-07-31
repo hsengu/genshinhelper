@@ -169,4 +169,5 @@ class RedeemCodes(commands.Cog):
             async for item in account.validate():
                 messages += [f"{item} is valid for {account.mihoyo_id}"]
             session.merge(account)
-            session.commit(delay)
+            session.commit()
+            await asyncio.sleep(delay)
