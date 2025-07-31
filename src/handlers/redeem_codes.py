@@ -84,6 +84,7 @@ class RedeemCodes(commands.Cog):
         embeds = []
 
         await self.validateTokens()
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
 
         for code in game_codes:
             code = code.strip().upper()
@@ -149,7 +150,7 @@ class RedeemCodes(commands.Cog):
                 break
 
             await ctx.edit(embeds=embeds)
-            await asyncio.sleep(7)
+            await asyncio.sleep(delay)
         logger.info(f"{ctx.author.id} end of /redeem attempt")
 
     async def validateTokens(self):
@@ -159,7 +160,7 @@ class RedeemCodes(commands.Cog):
             ).scalars().all()
         )
 
-        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+        delay = 1 if (len(accounts) >= 5) else (5/len(accounts))
 
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:
