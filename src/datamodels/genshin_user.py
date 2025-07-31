@@ -2,7 +2,6 @@ import json
 from typing import Dict, Any, List, Optional
 
 import genshin
-import asyncio
 from genshin import Game
 from sqlalchemy import Integer, String, Column, Text
 from sqlalchemy.orm import relationship
@@ -79,7 +78,6 @@ class GenshinUser(Base):
             yield "cookie_token"
             
         logger.info(f"\t\t{messages}")
-        await asyncio.sleep(7)
 
     async def getCookies(self, base_cookies):
         cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])
