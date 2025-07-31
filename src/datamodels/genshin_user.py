@@ -77,9 +77,9 @@ class GenshinUser(Base):
                 messages += ["cookie_token is valid"]
                 pass
             yield "cookie_token"
-            await asyncio.sleep(7)
             
         logger.info(f"\t\t{messages}")
+        await asyncio.sleep(7)
 
     async def getCookies(self, base_cookies):
         cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])
