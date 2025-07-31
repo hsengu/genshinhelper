@@ -159,6 +159,8 @@ class RedeemCodes(commands.Cog):
             ).scalars().all()
         )
 
+        delay = 1 if len(accounts) else 7/len(accounts)
+
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:
                 continue
@@ -167,5 +169,4 @@ class RedeemCodes(commands.Cog):
             async for item in account.validate():
                 messages += [f"{item} is valid for {account.mihoyo_id}"]
             session.merge(account)
-            session.commit()
-            await asyncio.sleep(7)
+            session.commit(delay)

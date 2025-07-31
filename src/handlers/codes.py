@@ -171,6 +171,8 @@ class CodeScanner(commands.Cog):
             ).scalars().all()
         )
 
+        delay = 1 if len(accounts) else 7/len(accounts)
+
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:
                 continue
@@ -180,7 +182,7 @@ class CodeScanner(commands.Cog):
                 messages += [f"{item} is valid for {account.mihoyo_id}"]
             session.merge(account)
             session.commit()
-            await asyncio.sleep(7)
+            await asyncio.sleep(delay)
 
     def get_codes_from_text(self, data):
         """
