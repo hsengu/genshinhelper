@@ -107,7 +107,10 @@ class CodeScanner(commands.Cog):
             case 'STARRAIL': redeem_game = genshin.Game.STARRAIL
             case 'ZZZ': redeem_game = genshin.Game.ZZZ
 
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+
         for code in codes:
+            await asyncio.sleep(delay)
             queue = []
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
@@ -122,7 +125,6 @@ class CodeScanner(commands.Cog):
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(f"\t {game_name} >>> Results: {results}")
-            await asyncio.sleep(7)
 
         session.commit()
 
