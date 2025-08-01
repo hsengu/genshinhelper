@@ -122,7 +122,7 @@ class CodeScanner(commands.Cog):
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(f"\t {game_name} >>> Results: {results}")
-            await asyncio.sleep(5)
+            await asyncio.sleep(7)
 
         session.commit()
 
@@ -172,7 +172,7 @@ class CodeScanner(commands.Cog):
             ).scalars().all()
         )
 
-        delay = 1 if (len(accounts) >= 5) else (5/len(accounts))
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
 
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:

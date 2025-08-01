@@ -83,7 +83,7 @@ class RedeemCodes(commands.Cog):
         await ctx.defer()
         embeds = []
 
-        await self.validateTokens()
+        await self.validateTokens(accounts)
         delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
 
         for code in game_codes:
@@ -153,14 +153,8 @@ class RedeemCodes(commands.Cog):
             await asyncio.sleep(delay)
         logger.info(f"{ctx.author.id} end of /redeem attempt")
 
-    async def validateTokens(self):
-        accounts: List[GenshinUser] = (
-            session.execute(
-                select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
-            ).scalars().all()
-        )
-
-        delay = 1 if (len(accounts) >= 5) else (5/len(accounts))
+    async def validateTokens(self, accounts):
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
 
         for account in accounts:
             if not account.settings[Preferences.AUTO_REDEEM]:
