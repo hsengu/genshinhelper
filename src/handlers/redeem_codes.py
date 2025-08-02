@@ -9,7 +9,7 @@ from discord.ext import commands
 from sqlalchemy import select
 
 from common import guild_level
-from common.constants import Emoji
+from common.constants import Emoji, Preferences
 from common.db import session
 from common.logging import logger
 from datamodels.genshin_user import GenshinUser
@@ -83,6 +83,9 @@ class RedeemCodes(commands.Cog):
         await ctx.defer()
         embeds = []
 
+        await self.validateTokens(accounts)
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+
         for code in game_codes:
             code = code.strip().upper()
             embed = discord.Embed(
@@ -109,9 +112,7 @@ class RedeemCodes(commands.Cog):
                             await gs.redeem_code(code, game=redeem_for)
                         redeemed += 1
                     except genshin.errors.InvalidCookies as e:
-                        account.mihoyo_token = None
-                        session.merge(account)
-                        session.commit()
+                        # account.mihoyo_token = None
                         user = await self.bot.fetch_user(account.discord_id)
                         dm_channel = await self.bot.create_dm(user)
                         await dm_channel.send(
@@ -122,25 +123,6 @@ class RedeemCodes(commands.Cog):
                                             f"Please register again if you want to continue using the bot."
                             )
                         )
-                        logger.info(f"\t\t{ctx.author.id} expired cookie_token for {account.mihoyo_id}: {e.retcode}")
-                        logger.info(f"\t\t{ctx.author.id} attempt to renew for {account.mihoyo_id}")
-                        renew = await account.validate()
-                        if renew == 'cookie_token':
-                            logger.info(f"\t\t{ctx.author.id} renewed cookie_token for {account.mihoyo_id}")
-                            await dm_channel.send(
-                                embed=discord.Embed(
-                                    title=":check: Cookie Token Renewal",
-                                    description=f"Your cookie_token been renewed for Hoyolab ID {account.mihoyo_id}.\n"
-                                )
-                            )
-                        else:
-                            logger.info(f"\t\t{ctx.author.id} failed to renew for {account.mihoyo_id}")
-                            await dm_channel.send(
-                                embed=discord.Embed(
-                                    title=":X: Cookie Token Renewal",
-                                    description=f"Your cookie_token failed to renew for Hoyolab ID {account.mihoyo_id}.\n"
-                                )
-                            )
                     except genshin.errors.GenshinException as e:
                         if e.retcode == -2017 or e.retcode == -2018:
                             already_claimed += 1
@@ -168,5 +150,19 @@ class RedeemCodes(commands.Cog):
                 break
 
             await ctx.edit(embeds=embeds)
-            await asyncio.sleep(7)
+            await asyncio.sleep(delay)
         logger.info(f"{ctx.author.id} end of /redeem attempt")
+
+    async def validateTokens(self, accounts):
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+
+        for account in accounts:
+            if not account.settings[Preferences.AUTO_REDEEM]:
+                continue
+        
+            messages = []
+            async for item in account.validate():
+                messages += [f"{item} is valid for {account.mihoyo_id}"]
+            session.merge(account)
+            session.commit()
+            await asyncio.sleep(delay)

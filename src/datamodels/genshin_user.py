@@ -41,37 +41,43 @@ class GenshinUser(Base):
         }
 
         new_cookies = self.getCookies(base)
-
+        logger.info(f"\tValidating {self.mihoyo_id}")
+        messages = []
         if self.hoyolab_token:
             try:
                 await gs.get_reward_info()
+                messages += ["ltoken is valid"]
             except genshin.errors.InvalidCookies:
                 self.hoyolab_token = None
-                logger.info("ltoken is not valid or has expired")
+                messages += ["ltoken is not valid or has expired"]
                 if self.stoken:
-                    logger.info("stoken found, attempting to renew ltoken")
-                    if result:
+                    if new_cookies:
                         self.hoyolab_token = new_cookies['ltoken_v2']
-                        yield "ltoken"
+                        messages += ["ltoken renewed"]
+                    else:
+                        messages += ["ltoken renewal failed"]
             except Exception:
                 pass
             yield "ltoken"
 
         if self.mihoyo_token:
             try:
-                await gs.redeem_code("GENSHIN123")  # Using a random code to validate cookies
+                await gs.redeem_code("GENSHIN123") # Using a random code to validate cookies
             except genshin.errors.InvalidCookies:
                 self.mihoyo_token = None
-                logger.info("cookie_token is not valid or has expired")
+                messages += ["cookie_token is not valid or has expired"]
                 if self.stoken:
-                    logger.info("stoken found, attempting to renew cookie token")
-                    result = self.getCookies(base)
-                    if result:
+                    if new_cookies:
                         self.mihoyo_token = new_cookies['cookie_token_v2']
-                        yield "cookie_token"
-            except Exception:
+                        messages += ["cookie_token renewed"]
+                    else:
+                        messages += ["cokie_token renewal failed"]
+            except Exception as e:
+                messages += ["cookie_token is valid"]
                 pass
             yield "cookie_token"
+            
+        logger.info(f"\t\t{messages}")
 
     async def getCookies(self, base_cookies):
         cookies = await genshin.fetch_cookie_with_stoken_v2(base_cookies, token_types=[2, 4])

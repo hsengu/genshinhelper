@@ -46,6 +46,8 @@ class CodeScanner(commands.Cog):
             session.execute(select(RedeemableCode.code)).scalars()
         )
 
+        await self.validateTokens()
+
         for game in games :
             if games[game].issubset(existing_codes):
                 logger.info(f"\t{game} >>> No new codes found")
@@ -105,12 +107,14 @@ class CodeScanner(commands.Cog):
             case 'STARRAIL': redeem_game = genshin.Game.STARRAIL
             case 'ZZZ': redeem_game = genshin.Game.ZZZ
 
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+
         for code in codes:
+            await asyncio.sleep(delay)
             queue = []
             for account in accounts:
                 if not account.settings[Preferences.AUTO_REDEEM]:
                     continue
-                account.validate()
                 logger.info(f"\t {game_name} >>> Redeeming code {code} for account {account.mihoyo_id}")
                 queue.append(asyncio.create_task(account.client.redeem_code(code=code, game=redeem_game)))
 
@@ -121,7 +125,6 @@ class CodeScanner(commands.Cog):
                 logger.info(f"\t {game_name} >>> Code {code} expired. Updating database")
 
             logger.info(f"\t {game_name} >>> Results: {results}")
-            await asyncio.sleep(5)
 
         session.commit()
 
@@ -164,6 +167,25 @@ class CodeScanner(commands.Cog):
                         if found:
                             break
                     
+    async def validateTokens(self):
+        accounts: List[GenshinUser] = (
+            session.execute(
+                select(GenshinUser).where(GenshinUser.mihoyo_token.is_not(None))
+            ).scalars().all()
+        )
+
+        delay = 1 if (len(accounts) >= 7) else (7/len(accounts))
+
+        for account in accounts:
+            if not account.settings[Preferences.AUTO_REDEEM]:
+                continue
+        
+            messages = []
+            async for item in account.validate():
+                messages += [f"{item} is valid for {account.mihoyo_id}"]
+            session.merge(account)
+            session.commit()
+            await asyncio.sleep(delay)
 
     def get_codes_from_text(self, data):
         """
