@@ -39,12 +39,11 @@ jobs:
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
-            echo "${{ vars.DOCKER_COMPOSE }}" > docker-compose.yml
+            echo "${{ vars.PODMAN_SYSD }}" > ~/.config/containers/systemd/genshin-helper.container
             cat docker-compose.yml
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-            docker stop genshin-helper || true
-            docker rm genshin-helper || true
-            docker rmi ghcr.io/${{ github.repository }}:latest || true
-            docker compose up -d
-            docker logout ghcr.io
-            rm docker-compose.yml
+            echo ${{ secrets.GHCR_TOKEN }} | podman login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            podman stop genshin-helper || true
+            podman rm genshin-helper || true
+            podman rmi ghcr.io/${{ github.repository }}:latest || true
+            systemctl --user start genshin-helper.service
+            podman logout ghcr.io
