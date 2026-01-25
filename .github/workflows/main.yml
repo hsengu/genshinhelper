@@ -39,11 +39,19 @@ jobs:
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
+            echo "Create pod service ..."
             echo "${{ vars.PODMAN_SYSD }}" > ~/.config/containers/systemd/genshin-helper.container
+            echo "Login to GHCR ..."
             echo ${{ secrets.GHCR_TOKEN }} | podman login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            echo "Reload systemd ..."
             systemctl --user daemon-reload || true
+            echo "Stop pod service ..."
             systemctl --user stop genshin-helper.service || true
+            echo "Delete existing container and image if present ..."
             podman rm genshin-helper || true
             podman rmi ghcr.io/${{ github.repository }}:latest || true
+            echo "Start pod service ..."
             systemctl --user start genshin-helper.service || true
+            echo "Logout of GHCR ..."
             podman logout ghcr.io
+            echo "Deployment complete!"
