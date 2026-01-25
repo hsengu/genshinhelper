@@ -1,4 +1,4 @@
-name: Deploy to Hetzner
+name: Deploy to Cloud
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: SSH into Hetzner server
+      - name: SSH into Cloud server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HETZNER_HOST }}
