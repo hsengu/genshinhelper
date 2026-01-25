@@ -51,7 +51,6 @@ jobs:
             echo "Reload systemd ..."
             systemctl --user daemon-reload || true
             echo "Start pod service ..."
-            podman pull ghcr.io/hsengu/genshinhelper:latest
             systemctl --user start genshin-helper.service || true
             echo "Logout of GHCR ..."
             podman logout ghcr.io
