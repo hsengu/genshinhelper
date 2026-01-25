@@ -1,4 +1,5 @@
 FROM python:3.12.6-alpine AS base
+LABEL org.opencontainers.image.source="https://github.com/hsengu/genshinhelper"
 
 FROM base AS build
 
